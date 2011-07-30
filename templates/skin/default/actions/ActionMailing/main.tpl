@@ -128,6 +128,7 @@
             <input name="aSex[]" type="checkbox" value="other" checked /> — {$aLang.user_stats_sex_other}
             <br />
         </p>
+        {if $sTemplateWebPathPluginL10n}
         <p>
             {$aLang.ml_lang}:
             <br />
@@ -137,6 +138,7 @@
                 <br />
             {/foreach}
         </p>
+        {/if}
         <p>
             <input name="active" id="active" type="checkbox" checked /> — {$aLang.ml_active}
             <br />

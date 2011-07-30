@@ -92,6 +92,7 @@
             <br />
             <span class="input-note">{$aLang.ml_edit_warning}</span>
         </p>
+        {if $sTemplateWebPathPluginL10n}
         <p>
             {$aLang.ml_lang}:
             <br />
@@ -101,6 +102,7 @@
                 <br />
             {/foreach}
         </p>
+        {/if}
        <p class="buttons">
             <input type="submit" name="submit_mailing_edit" style="width:90px" value="{$aLang.ml_save}">
             <input type="submit" name="cancel" style="width:90px" value="{$aLang.ml_cancel}">

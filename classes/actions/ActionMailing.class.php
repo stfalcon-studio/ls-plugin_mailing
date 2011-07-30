@@ -56,11 +56,16 @@ class PluginMailing_ActionMailing extends ActionPlugin
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
             return Router::Action('error'); // Redirect to the error page
         }
-
-        /* Language */
-        $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
-        $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
-        $this->Viewer_Assign("aLangs", $aLangs);
+        
+        /* Language filter*/
+        if (  $this->PluginMailing_Plugin_IsActivePlugins('l10n') ) {
+            $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
+            $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
+            $this->Viewer_Assign("aLangs", $aLangs);
+        } else {
+            $this->Viewer_Assign("sTemplateWebPathPluginL10n", null);
+        }
+        
     }
 
     /**
@@ -103,10 +108,16 @@ class PluginMailing_ActionMailing extends ActionPlugin
             func_header_location(Router::GetPath('mailing') . "list/");
         }
 
+        
         /* Language */
-        $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
-        $this->Viewer_Assign("aLangs", $aLangs);
-        $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
+        $aLangs = array();
+        if (  $this->PluginMailing_Plugin_IsActivePlugins('l10n') ) {
+            $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
+            $this->Viewer_Assign("aLangs", $aLangs);
+            $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
+        } else {
+            $this->Viewer_Assign("sTemplateWebPathPluginL10n", null);
+        }
 
         if (isset($_REQUEST['submit_mailing_edit'])) {
             if (!$this->CheckMailingFields()) {
@@ -114,27 +125,28 @@ class PluginMailing_ActionMailing extends ActionPlugin
                 $this->SetTemplateAction('edit.mailing');
                 return false;
             }
-            $aSex = getRequest('aSex', null, 'post');
+            $aSex = getRequest('aSex', null, 'post') ? getRequest('aSex', null, 'post') : array();
             unset($aSex['$family']);
-            $aLangs = getRequest('aLangs', null, 'post');
+            $aLangs = getRequest('aLangs', null, 'post') ? getRequest('aLangs', null, 'post') : array();
             unset($aLangs['$family']);
 
             $oMailing->setMailingTitle(getRequest('subject'));
 
             $oMailing->setMailingText(htmlspecialchars(getRequest('talk_text', null, 'post')), ENT_QUOTES, 'UTF_8', true);
-            if ($oMailing->getMailingSex() != $aSex || $oMailing->getMailingLang() != $aLangs) {
-                $oMailing->setMailingSex($aSex);
-                $oMailing->setMailingLang($aLangs);
-                // удаляем старый список рассылки
-                $this->PluginMailing_ModuleMailing_DeleteMailingQueue($oMailing);
 
-                $oUserCurrent = $this->User_GetUserCurrent();
+            //if ($oMailing->getMailingSex() != $aSex || $oMailing->getMailingLang() != $aLangs) {
+            $oMailing->setMailingSex($aSex);
+            $oMailing->setMailingLang($aLangs);
+            // удаляем старый список рассылки
+            $this->PluginMailing_ModuleMailing_DeleteMailingQueue($oMailing);
 
-                $oMailing->setSendByUserId($oUserCurrent->GetId());
+            $oUserCurrent = $this->User_GetUserCurrent();
 
-                // пересоздаем очередь рассылки с новыми
-                $this->PluginMailing_ModuleMailing_AddMailToQueue($oMailing);
-            }
+            $oMailing->setSendByUserId($oUserCurrent->GetId());
+
+            // пересоздаем очередь рассылки с новыми
+            $this->PluginMailing_ModuleMailing_AddMailToQueue($oMailing);
+            //}
 
             if (!$this->PluginMailing_ModuleMailing_UpdateMailing($oMailing)) {
                 $this->Message_AddErrorSingle($this->Lang_Get("mailing_error_unable_to_edit"));
@@ -225,10 +237,12 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $this->Message_AddError($this->Lang_Get('ml_sex_select_error'));
             $bOk = false;
         }
-
-        if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
-            $this->Message_AddError($this->Lang_Get('ml_lang_select_error'));
-            $bOk = false;
+        
+        if ($this->PluginMailing_Plugin_IsActivePlugins('l10n')) {
+            if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
+                $this->Message_AddError($this->Lang_Get('ml_lang_select_error'));
+                $bOk = false;
+            }
         }
 
         return $bOk;

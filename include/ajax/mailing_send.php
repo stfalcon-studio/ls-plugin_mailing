@@ -57,9 +57,11 @@ if ($oEngine->User_IsAuthorization()) {
             $sError = $oEngine->Lang_Get('ml_sex_select_error');
             $bStateError = true;
         }
-        if (!is_array($aLangs) || count($aLangs) == 0) {
-            $sError = $oEngine->Lang_Get('ml_lang_select_error');
-            $bStateError = true;
+        if ($oEngine->PluginMailing_Plugin_IsActivePlugins('l10n')) {
+            if (!is_array($aLangs) || count($aLangs) == 0) {
+                $sError = $oEngine->Lang_Get('ml_lang_select_error');
+                $bStateError = true;
+            }
         }
         // если нет ошибок то:
         if (!$bStateError) {
