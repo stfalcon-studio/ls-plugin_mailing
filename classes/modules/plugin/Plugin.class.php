@@ -1,4 +1,23 @@
 <?php
+
+/* ---------------------------------------------------------------------------
+ * @Plugin Name: Mailing
+ * @Plugin Id: mailing
+ * @Plugin URI:
+ * @Description: Mass mailing for users
+ * @Author: stfalcon-studio
+ * @Author URI: http://stfalcon.com
+ * @LiveStreet Version: 0.4.2
+ * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * ----------------------------------------------------------------------------
+ */
+
+/**
+ * Mailing Plugin Class for LiveStreet
+ *
+ * Select all users IDs from Mapper
+ */
+
 require_once('Plugin.class.php');
 /* Локальное дополнение к модулю Plugin */
 class PluginMailing_ModulePlugin extends ModulePlugin {
