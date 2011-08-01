@@ -58,7 +58,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
         }
         
         /* Language filter*/
-        if (  $this->PluginMailing_Plugin_IsActivePlugins('l10n') ) {
+        if ( in_array('l10n',$this->Plugin_GetActivePlugins()) ) {
             $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
             $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
             $this->Viewer_Assign("aLangs", $aLangs);
@@ -111,7 +111,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
         
         /* Language */
         $aLangs = array();
-        if (  $this->PluginMailing_Plugin_IsActivePlugins('l10n') ) {
+        if ( in_array('l10n',$this->Plugin_GetActivePlugins()) ) {
             $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
             $this->Viewer_Assign("aLangs", $aLangs);
             $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
@@ -125,9 +125,9 @@ class PluginMailing_ActionMailing extends ActionPlugin
                 $this->SetTemplateAction('edit.mailing');
                 return false;
             }
-            $aSex = getRequest('aSex', null, 'post') ? getRequest('aSex', null, 'post') : array();
+            $aSex = getRequest('aSex', array(), 'post');
             unset($aSex['$family']);
-            $aLangs = getRequest('aLangs', null, 'post') ? getRequest('aLangs', null, 'post') : array();
+            $aLangs = getRequest('aLangs', array(), 'post');
             unset($aLangs['$family']);
 
             $oMailing->setMailingTitle(getRequest('subject'));
@@ -238,7 +238,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $bOk = false;
         }
         
-        if ($this->PluginMailing_Plugin_IsActivePlugins('l10n')) {
+        if ( in_array('l10n',$this->Plugin_GetActivePlugins()) ) {
             if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
                 $this->Message_AddError($this->Lang_Get('ml_lang_select_error'));
                 $bOk = false;

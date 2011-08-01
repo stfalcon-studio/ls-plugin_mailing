@@ -28,12 +28,9 @@ class PluginMailing_ModuleUsers_MapperUsers extends Mapper
      * @param bool  $iSkipLang
      * @return array
      */
-    public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null, $iSkipLang = true)
+    public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null)
     {
         if (!count($aSex)) { 
-            return array();
-        }
-        if (!$iSkipLang && !count($aLangs))  {
             return array();
         }
         
@@ -45,7 +42,7 @@ class PluginMailing_ModuleUsers_MapperUsers extends Mapper
         if ($iSkipUserId) {
             $sql .= " AND `user_id` <> " . (int) $iSkipUserId;
         }
-        if (!$iSkipLang) {
+        if (count($aLangs)) {
             $sql .= ' AND `user_lang` IN (?a)';
             return $this->oDb->selectCol($sql, $aSex, $aLangs);
         }

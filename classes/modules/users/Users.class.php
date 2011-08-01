@@ -43,7 +43,7 @@ class PluginMailing_ModuleUsers extends Module {
      */
     public function GetUsersIDList(array $aSex, array $aLangs, $iSkipUserId = null)
     {
-        return $this->_oMapper->GetUsersIDList($aSex, $aLangs, $iSkipUserId, !$this->PluginMailing_Plugin_IsActivePlugins('l10n'));
+        return $this->_oMapper->GetUsersIDList($aSex, $aLangs, $iSkipUserId);
     }
 
 }

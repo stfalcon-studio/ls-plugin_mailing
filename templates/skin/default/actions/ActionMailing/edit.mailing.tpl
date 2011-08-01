@@ -82,7 +82,10 @@
         </p>
 
         <p>
-            {$aLang.ml_sent_filter}:
+            <span class="input-note">{$aLang.ml_edit_warning}</span>
+        </p>
+        <p>
+            {$aLang.ml_sex}:
             <br />
             <input name="aSex[]" type="checkbox" value="man" {if in_array('man', $oMailing->getMailingSex())}checked{/if} /> — {$aLang.user_stats_sex_man}
             <br />
@@ -90,7 +93,6 @@
             <br />
             <input name="aSex[]" type="checkbox" value="other" {if in_array('other', $oMailing->getMailingSex())}checked{/if}/> — {$aLang.user_stats_sex_other}
             <br />
-            <span class="input-note">{$aLang.ml_edit_warning}</span>
         </p>
         {if $sTemplateWebPathPluginL10n}
         <p>

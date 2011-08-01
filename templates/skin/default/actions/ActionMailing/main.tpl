@@ -119,7 +119,7 @@
         </p>
         
         <p>
-            {$aLang.ml_sent_filter}:
+            {$aLang.ml_sex}:
             <br />
             <input name="aSex[]" type="checkbox" value="man" checked /> — {$aLang.user_stats_sex_man}
             <br />
