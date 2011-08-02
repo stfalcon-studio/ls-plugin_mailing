@@ -93,21 +93,19 @@ class PluginMailing_ModuleMailing extends Module
 
 
         // Return if recipients list is empty
-        if (empty($aUserIdTo))
-            return false;
-
         $i = 0;
-
-        foreach ($aUserIdTo as $iUserId) {
-            // Put mail into Mailing queue
-            $oMailingQueue = new PluginMailing_ModuleMailing_EntityMailingQueue();
-            $oMailingQueue->setMailingId($oMailing->getMailingId());
-            $oMailingQueue->setUserId($iUserId);
-            if ($this->_oMapper->addMailToQueue($oMailingQueue)) {
-                $i++;
+        if (!empty($aUserIdTo)) {
+            foreach ($aUserIdTo as $iUserId) {
+                // Put mail into Mailing queue
+                $oMailingQueue = new PluginMailing_ModuleMailing_EntityMailingQueue();
+                $oMailingQueue->setMailingId($oMailing->getMailingId());
+                $oMailingQueue->setUserId($iUserId);
+                if ($this->_oMapper->addMailToQueue($oMailingQueue)) {
+                    $i++;
+                }
             }
         }
-
+        
         // Update number of successful addition
         $oMailing->setMailingCount($i);
 
@@ -178,5 +176,5 @@ class PluginMailing_ModuleMailing extends Module
     {
         return $this->_oMapper->SetTalkIdForSendedMail($MailId, $TalkId);
     }
-
+    
 }

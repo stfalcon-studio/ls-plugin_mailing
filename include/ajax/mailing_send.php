@@ -31,17 +31,10 @@ if ($oEngine->User_IsAuthorization()) {
         $sText = $oEngine->Text_Parser(getRequest('talk_text', null, 'post'));
         $sTitle = getRequest('subject', null, 'post');
         $sActive = getRequest('active', null, 'post');
-        $aLangs = getRequest('aLangs', null, 'post');
 
-        /**
-         * @todo что это? Как это?
-         */
+        $aLangs = getRequest('aLangs', null, 'post');
         unset($aLangs['$family']);
         $aSex = getRequest('aSex', null, 'post');
-
-        /**
-         * @todo что это? Как это?
-         */
         unset($aSex['$family']);
 
         // проверка полей, текст, заголовок, пол
@@ -57,9 +50,11 @@ if ($oEngine->User_IsAuthorization()) {
             $sError = $oEngine->Lang_Get('ml_sex_select_error');
             $bStateError = true;
         }
-        if (!is_array($aLangs) || count($aLangs) == 0) {
-            $sError = $oEngine->Lang_Get('ml_lang_select_error');
-            $bStateError = true;
+        if ( in_array('l10n',$oEngine->Plugin_GetActivePlugins()) ) {
+            if (!is_array($aLangs) || count($aLangs) == 0) {
+                $sError = $oEngine->Lang_Get('ml_lang_select_error');
+                $bStateError = true;
+            }
         }
         // если нет ошибок то:
         if (!$bStateError) {
