@@ -25,26 +25,29 @@ class PluginMailing_ModuleUsers_MapperUsers extends Mapper
      * @param array $aSex
      * @param array $aLangs
      * @param int   $iSkipUserId
+     * @param bool  $iSkipLang
      * @return array
      */
     public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null)
     {
-        if (!count($aSex) || !count($aLangs)) {
+        if (!count($aSex)) { 
             return array();
         }
-
+        
         $sql = 'SELECT `user_id`
                   FROM ' . Config::Get('db.table.user') . '
                  WHERE `user_profile_sex` IN (?a)
-                   AND `user_lang` IN (?a)';
-
+               ';
         // Skip some user from results. For example current user
         if ($iSkipUserId) {
             $sql .= " AND `user_id` <> " . (int) $iSkipUserId;
         }
-
-        return $this->oDb->selectCol($sql, $aSex, $aLangs);
+        if (count($aLangs)) {
+            $sql .= ' AND `user_lang` IN (?a)';
+            return $this->oDb->selectCol($sql, $aSex, $aLangs);
+        }
+        return $this->oDb->selectCol($sql, $aSex);
     }
-
+    
 }
 
