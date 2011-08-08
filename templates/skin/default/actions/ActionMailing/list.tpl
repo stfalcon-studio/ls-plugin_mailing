@@ -3,7 +3,7 @@
 
 <div class="topic people top-blogs talk-table">
     <h1>{$aLang.ml_list}</h1>
-        {if ($aMailing)}
+    {if ($aMailing)}
     <table>
         <thead>
             <tr>
@@ -25,11 +25,11 @@
                 </td>
                 <td>
                     {if ($oMailing->getMailingSend() == $oMailing->getMailingCount())}
-                        {$aLang.ml_send_all}
+                    {$aLang.ml_send_all}
                     {elseif ($oMailing->getMailingActive())}
-                        {$aLang.ml_ready}
+                    {$aLang.ml_ready}
                     {else}
-                        {$aLang.ml_wait}
+                    {$aLang.ml_wait}
                     {/if}
                 </td>
                 <td>
@@ -40,7 +40,7 @@
                     {if ($oMailing->getMailingSend() != $oMailing->getMailingCount())}
                     <a class="deactivation-mailing" href="{router page='mailing'}activate/{$oMailing->getMailingId()}">
                         {if ($oMailing->getMailingActive())}
-                            {$aLang.ml_deactivation}{else}{$aLang.ml_activation}{/if}</a>&nbsp;
+                        {$aLang.ml_deactivation}{else}{$aLang.ml_activation}{/if}</a>&nbsp;
                     {/if}
                     {if ($oMailing->getMailingSend() == 0) }
                     <a class="edit-mailing" href="{router page='mailing'}edit/{$oMailing->getMailingId()}">{$aLang.ml_edit}</a>&nbsp;
@@ -50,8 +50,9 @@
             </tr>
             {/foreach}
         </tbody>
-        {else}
-         {$aLang.ml_no_list}
-        {/if}
     </table>
+    {else}
+    {$aLang.ml_no_list}
+    {/if}
 </div>
+{include file='footer.tpl'}
