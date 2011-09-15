@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.4.2
+ * @LiveStreet Version: 0.5.0
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -19,14 +19,19 @@
  */
 class PluginMailing_ActionMailing extends ActionPlugin
 {
+    /**
+     * Action initialization
+     *
+     * @return void
+     */
 
     /**
      * Action initialization
      *
      * @return void
      */
-    public function Init()
-    {
+    public function Init() {
+
         $this->Viewer_AddHtmlTitle($this->Lang_Get('ml_title'));
         $this->SetDefaultEvent('main');
     }
@@ -36,13 +41,13 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return void
      */
-    protected function RegisterEvent()
-    {
+    protected function RegisterEvent() {
         $this->AddEvent('main', 'EventMailer');
         $this->AddEvent('edit', 'EventEdit');
         $this->AddEvent('list', 'EventList');
         $this->AddEvent('delete', 'EventDelete');
         $this->AddEvent('activate', 'EventActivate');
+        $this->AddEvent('ajaxsave', 'EventAjaxSave');
     }
 
     /**
@@ -50,31 +55,28 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    protected function EventMailer()
-    {
+    protected function EventMailer() {
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
             return Router::Action('error'); // Redirect to the error page
         }
-        
-        /* Language filter*/
-        if ( in_array('l10n',$this->Plugin_GetActivePlugins()) ) {
+
+        /* Language filter */
+        if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
             $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
             $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
             $this->Viewer_Assign("aLangs", $aLangs);
         } else {
             $this->Viewer_Assign("sTemplateWebPathPluginL10n", null);
         }
-        
     }
 
     /**
      * List of mailings
-     * 
+     *
      * @return mixed
      */
-    public function EventList()
-    {
+    public function EventList() {
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
             return Router::Action('error'); // Redirect to the error page
@@ -87,11 +89,10 @@ class PluginMailing_ActionMailing extends ActionPlugin
 
     /**
      * Edit mailings
-     * 
+     *
      * @return mixed
      */
-    public function EventEdit()
-    {
+    public function EventEdit() {
 
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
@@ -108,10 +109,10 @@ class PluginMailing_ActionMailing extends ActionPlugin
             func_header_location(Router::GetPath('mailing') . "list/");
         }
 
-        
+
         /* Language */
         $aLangs = array();
-        if ( in_array('l10n',$this->Plugin_GetActivePlugins()) ) {
+        if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
             $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
             $this->Viewer_Assign("aLangs", $aLangs);
             $this->Viewer_Assign("sTemplateWebPathPluginL10n", Plugin::GetTemplateWebPath('l10n'));
@@ -126,9 +127,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
                 return false;
             }
             $aSex = getRequest('aSex', array(), 'post');
-            unset($aSex['$family']);
+
             $aLangs = getRequest('aLangs', array(), 'post');
-            unset($aLangs['$family']);
 
             $oMailing->setMailingTitle(getRequest('subject'));
 
@@ -163,8 +163,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    public function EventActivate()
-    {
+    public function EventActivate() {
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
             return Router::Action('error'); // Redirect to the error page
@@ -199,13 +198,93 @@ class PluginMailing_ActionMailing extends ActionPlugin
     }
 
     /**
+     * Save mailing event through Ajax
+     *
+     * @return type
+     */
+    protected function EventAjaxSave() {
+        $this->Viewer_SetResponseAjax('json');
+
+        $oUserCurrent = $this->User_GetUserCurrent();
+
+        if (!$oUserCurrent) {
+            $this->Message_AddErrorSingle($this->Lang_Get('need_authorization'), $this->Lang_Get('error'));
+            return;
+        }
+
+        $bStateError = false;
+
+        if ($oUserCurrent->isAdministrator()) {
+
+            $sText = $this->Text_Parser(getRequest('talk_text', null, 'post'));
+
+            $sTitle = getRequest('subject', null, 'post');
+
+            $sActive = getRequest('active', null, 'post');
+
+            $aLangs = getRequest('aLangs', array(), 'post');
+
+            $aSex = getRequest('aSex', array(), 'post');
+
+
+            // проверка полей, текст, заголовок, пол
+            if (!func_check($sTitle, 'text', 2, 200)) {
+                $this->Message_AddError($this->Lang_Get('talk_create_title_error'), $this->Lang_Get('error'));
+                $bStateError = true;
+            }
+
+            if (!func_check($sText, 'text', 2, 3000)) {
+                $this->Message_AddError($this->Lang_Get('talk_create_text_error'), $this->Lang_Get('error'));
+                $bStateError = true;
+            }
+
+            if (!is_array($aSex) || count($aSex) == 0) {
+                $this->Message_AddError($this->Lang_Get('ml_sex_select_error'), $this->Lang_Get('error'));
+                $bStateError = true;
+            }
+
+            if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
+                if (!is_array($aLangs) || count($aLangs) == 0) {
+                    $this->Message_AddError($this->Lang_Get('ml_lang_select_error'), $this->Lang_Get('error'));
+                    $bStateError = true;
+                }
+            }
+
+            // если нет ошибок то:
+            if (!$bStateError) {
+                // создаем рассылку
+                $oMailing = new PluginMailing_ModuleMailing_EntityMailing();
+                $oMailing->setSendByUserId($oUserCurrent->getId());
+                $oMailing->setMailingTitle($sTitle);
+                $oMailing->setMailingText($sText);
+                $oMailing->setMailingActive($sActive);
+                $oMailing->setMailingSex($aSex);
+                $oMailing->setMailingLang($aLangs);
+                $oMailing->setMailingDate(date("Y-m-d H:i:s"));
+
+                if (!$this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
+                    $this->Message_AddErrorSingle($this->Lang_Get('mailing_error_unable_to_add'), $this->Lang_Get('error'));
+                    $bStateError = true;
+                } else {
+                    // оповещение о результатах
+                    $sMsg = $this->Lang_Get($sActive ? 'ml_ok' : 'ml_ok_inactive');
+
+                    $this->Message_AddNoticeSingle($sMsg, $this->Lang_Get('ml_title'));
+                }
+            }
+        } else {
+            $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('error'));
+        }
+        $this->Viewer_AssignAjax('bStateError', $bStateError);
+    }
+
+    /**
      * Activate mailing
-     * 
+     *
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    protected function StartMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
-    {
+    protected function StartMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
 
         $oUserCurrent = $this->User_GetUserCurrent();
         $oMailing->setSendByUserId($oUserCurrent->getId());
@@ -219,8 +298,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
      * check mailing fields
      * @return boolean
      */
-    protected function CheckMailingFields()
-    {
+    protected function CheckMailingFields() {
         $bOk = true;
 
         if (!func_check(getRequest('subject'), 'text', 2, 200)) {
@@ -237,8 +315,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $this->Message_AddError($this->Lang_Get('ml_sex_select_error'));
             $bOk = false;
         }
-        
-        if ( in_array('l10n',$this->Plugin_GetActivePlugins()) ) {
+
+        if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
             if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
                 $this->Message_AddError($this->Lang_Get('ml_lang_select_error'));
                 $bOk = false;
@@ -250,11 +328,10 @@ class PluginMailing_ActionMailing extends ActionPlugin
 
     /**
      * Delete mailing
-     * 
+     *
      * @return mixed
      */
-    public function EventDelete()
-    {
+    public function EventDelete() {
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
             return Router::Action('error'); // Redirect to the error page

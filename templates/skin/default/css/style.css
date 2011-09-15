@@ -1,5 +1,15 @@
+#nav ul.sub-menu {
+    width: 600px;
+}
+
 #mlForm {
     display: inline;
+}
+
+#mlForm textarea {
+    height: 200px;
+    margin-bottom: 5px;
+    width: 99%;
 }
 
 dl.mlInfo {

@@ -1,59 +1,12 @@
 {assign var="bNoSidebar" value=true}
 {include file='header.tpl' menu='talk'}
-<style type="text/css" media='all'> 
-    @import url({$sTemplateWebPathPlugin}/css/style.css); 
-</style>
-{literal}
-    <script type="text/javascript">
-        function ajaxMailingSend(subId, textId, activeId) {
-            var text;
-            if (BLOG_USE_TINYMCE && tinyMCE && (ed=tinyMCE.get(textId))) {
-                text = ed.getContent();
-            } else {
-                text = $(textId).value;
-            }
-            subj = $(subId).value;
-            active = $(activeId).get('checked');
-            hash = new Hash();
-            $('mlForm').getElements('input[name="aSex[]"]:checked').each(function(item, index){hash.set(index,item.value)}); 
-        
-            hashlang = new Hash();
-            $('mlForm').getElements('input[name="aLangs[]"]:checked').each(function(item, index){hashlang.set(index,item.value)});
-                
-            var loader = $('mlForm').getElements('.loader').setStyle('display',''); 
-                
-            JsHttpRequest.query(
-                'POST '+DIR_WEB_ROOT+'/plugins/mailing/include/ajax/mailing_send.php',
-                { talk_text: text, aSex: hash, aLangs: hashlang, subject: subj, active: active, security_ls_key: LIVESTREET_SECURITY_KEY },
-                function(result, errors) {
-                    if (!result) {
-                        msgErrorBox.alert('Error', 'Please try again later');
-                    }
-                    
-                    if (result.bStateError==1) {
-                        msgErrorBox.alert(result.sErrorTitle, result.sError);
-                    } else {
-                        msgNoticeBox.alert(result.sTitle, result.sText);
-                        $('subject').value='';
-                        $('talk_text').value='';
-                        $('mlForm').getElements('input[name="aSex[]"]').each(function(item, index){ item.checked=true }); 
-                    }
-                    loader.setStyle('display','none');     
-                        
-                },
-                true
-            );
-            
-        }
-    </script>
-{/literal}
-
+<script type="text/javascript" src="{$sTemplateWebPathPlugin}js/mailing.js"></script>
 {if $oConfig->GetValue('view.tinymce')}
-    <script type="text/javascript" src="{cfg name='path.root.engine_lib'}/external/tinymce_3.2.7/tiny_mce.js"></script>
+    <script type="text/javascript" src="{cfg name='path.root.engine_lib'}/external/tinymce/tiny_mce.js"></script>
 
     {literal}
         <script type="text/javascript">
-            tinyMCE.init({
+        tinyMCE.init({
                 mode : "textareas",
                 theme : "advanced",
                 theme_advanced_toolbar_location : "top",
@@ -68,15 +21,20 @@
                 theme_advanced_path : false,
                 object_resizing : true,
                 force_br_newlines : true,
-                forced_root_block : '', // Needed for 3.x
-                force_p_newlines : false,
-                plugins : "lseditor,safari,inlinepopups,media,pagebreak",
-                convert_urls : false,
-                extended_valid_elements : "embed[src|type|allowscriptaccess|allowfullscreen|width|height]",
-                language : TINYMCE_LANG
-            });
-        </script>
-    {/literal}
+                inline_styles:false,
+                formats : {
+                    underline : {inline : 'u', exact : true},
+                    strikethrough : {inline : 's', exact : true}
+                },
+            forced_root_block : '', // Needed for 3.x
+            force_p_newlines : false,
+            plugins : "lseditor,safari,inlinepopups,media,pagebreak",
+            convert_urls : false,
+            extended_valid_elements : "embed[src|type|allowscriptaccess|allowfullscreen|width|height]",
+            language : TINYMCE_LANG
+        });
+        {/literal}
+    </script>
 
 {else}
     {include file='window_load_img.tpl' sToLoad='talk_text'}
@@ -99,28 +57,28 @@
             <label for="talk_text">{$aLang.talk_create_text}:</label>
             {if !$oConfig->GetValue('view.tinymce')}
                 <div class="panel_form">
-                    <select onchange="lsPanel.putTagAround('talk_text',this.value); this.selectedIndex=0; return false;" style="width: 110px; height: 22px;">
+                    <select onchange="lsPanel.putTagAround('talk_text',this.value); this.selectedIndex=0; return false;">
                         <option value="">{$aLang.panel_title}</option>
                         <option value="h4">{$aLang.panel_title_h4}</option>
                         <option value="h5">{$aLang.panel_title_h5}</option>
                         <option value="h6">{$aLang.panel_title_h6}</option>
                     </select>
-                    <select onchange="lsPanel.putList('talk_text',this); return false;" style="width: 85px; height: 22px;">
+                    <select onchange="lsPanel.putList('talk_text',this); return false;">
                         <option value="">{$aLang.panel_list}</option>
                         <option value="ul">{$aLang.panel_list_ul}</option>
                         <option value="ol">{$aLang.panel_list_ol}</option>
                     </select>
-                    <a href="#" onclick="lsPanel.putTagAround('talk_text','b'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/bold_ru.gif" width="20" height="20" title="{$aLang.panel_b}"></a>
-                    <a href="#" onclick="lsPanel.putTagAround('talk_text','i'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/italic_ru.gif" width="20" height="20" title="{$aLang.panel_i}"></a>
-                    <a href="#" onclick="lsPanel.putTagAround('talk_text','u'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/underline_ru.gif" width="20" height="20" title="{$aLang.panel_u}"></a>
-                    <a href="#" onclick="lsPanel.putTagAround('talk_text','s'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/strikethrough.gif" width="20" height="20" title="{$aLang.panel_s}"></a>
+                    <a href="#" onclick="lsPanel.putTagAround('talk_text','b'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/bold.png" title="{$aLang.panel_b}"></a>
+                    <a href="#" onclick="lsPanel.putTagAround('talk_text','i'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/italic.png" title="{$aLang.panel_i}"></a>
+                    <a href="#" onclick="lsPanel.putTagAround('talk_text','u'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/underline.png" title="{$aLang.panel_u}"></a>
+                    <a href="#" onclick="lsPanel.putTagAround('talk_text','s'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/strikethrough.png" title="{$aLang.panel_s}"></a>
                     &nbsp;
-                    <a href="#" onclick="lsPanel.putTagUrl('talk_text','{$aLang.panel_url_promt}'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/link.gif" width="20" height="20"  title="{$aLang.panel_url}"></a>
-                    <a href="#" onclick="lsPanel.putQuote('talk_text'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/quote.gif" width="20" height="20" title="{$aLang.panel_quote}"></a>
-                    <a href="#" onclick="lsPanel.putTagAround('talk_text','code'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/code.gif" width="30" height="20" title="{$aLang.panel_code}"></a>
-                    <a href="#" onclick="lsPanel.putTagAround('talk_text','video'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/video.gif" width="20" height="20" title="{$aLang.panel_video}"></a>
+                    <a href="#" onclick="lsPanel.putTagUrl('talk_text','{$aLang.panel_url_promt}'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/link.png"  title="{$aLang.panel_url}"></a>
+                    <a href="#" onclick="lsPanel.putQuote('talk_text'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/quote.png" title="{$aLang.panel_quote}"></a>
+                    <a href="#" onclick="lsPanel.putTagAround('talk_text','code'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/code.png" title="{$aLang.panel_code}"></a>
+                    <a href="#" onclick="lsPanel.putTagAround('talk_text','video'); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/video.png" title="{$aLang.panel_video}"></a>
 
-                    <a href="#" onclick="showImgUploadForm(); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/img.gif" width="20" height="20" title="{$aLang.panel_image}"></a>
+                    <a href="#" onclick="showImgUploadForm(); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/img.png" title="{$aLang.panel_image}"></a>
                 </div>
             {/if}
             <textarea name="talk_text" id="talk_text" rows="12">{$_aRequest.talk_text}</textarea>
@@ -140,7 +98,7 @@
                 {$aLang.ml_lang}:
                 <br />
                 {foreach from=$aLangs key=sLangKey item=sLangText}
-                    <input name="aLangs[]" type="checkbox" value="{$sLangKey}" checked="checked"/> — 
+                    <input name="aLangs[]" type="checkbox" value="{$sLangKey}" checked="checked"/> —
                     <img src="{$sTemplateWebPathPluginL10n}images/flags/{$sLangKey}.png" alt="{$sLangKey}"/>
                     <br />
                 {/foreach}

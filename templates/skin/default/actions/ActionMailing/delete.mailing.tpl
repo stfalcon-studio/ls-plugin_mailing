@@ -1,13 +1,10 @@
 {assign var="bNoSidebar" value=true}
 {include file='header.tpl' menu='talk'}
-<style type="text/css" media='all'> 
-    @import url({$sTemplateWebPathPlugin}/css/style.css); 
-</style>
 <div class="topic">
     <h1>{$aLang.ml_title}</h1>
     <form action="" id="mlForm" method="post">
         <div class="fieldset">
-            <dl class="mlInfo"> 
+            <dl class="mlInfo">
                 <dt>{$aLang.ml_subj} </dt>
                 <dd>{$oMailing->getMailingTitle()}</dd>
                 <dt>{$aLang.ml_status}: </dt>
