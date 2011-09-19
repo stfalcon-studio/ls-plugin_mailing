@@ -20,7 +20,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 {
     /**
      * Add mailing
-     * 
+     *
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return int|boolean
      */
@@ -38,7 +38,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
                      )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 		";
-        if ($iId = $this->oDb->query($sql, 
+        if ($iId = $this->oDb->query($sql,
                         $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(),
                         $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()),
                         $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()))) {
@@ -49,7 +49,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 
     /**
      * Update mailing
-     * 
+     *
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
@@ -66,7 +66,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
                        mailing_lang = ?
                  WHERE mailing_id = ?d
 		";
-        if ($this->oDb->query($sql, 
+        if ($this->oDb->query($sql,
                         $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(),
                         $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()),
                         $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingId())) {
@@ -77,7 +77,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 
     /**
      * Delete mailing
-     * 
+     *
      * @param int $sMailingId
      * @return boolean
      */
@@ -94,7 +94,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 
     /**
      * Add mail to queue
-     * 
+     *
      * @param PluginMailing_ModuleMailing_EntityMailingQueue $oMailingQueue
      * @return boolean
      */
@@ -113,7 +113,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 
     /**
      * Get mails from queue for sending, limit in config
-     * 
+     *
      * @return PluginMailing_ModuleMailing_EntityMailingQueue
      */
     public function GetMailsFromQueue()
@@ -154,7 +154,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 
     /**
      * Get mailings
-     * 
+     *
      * @return PluginMailing_ModuleMailing_EntityMailing
      */
     public function GetMailings()
@@ -165,7 +165,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
                          ON mq.mailing_id = m.mailing_id
                  GROUP BY m.mailing_id
                 ";
-        
+
         $aMailing = array();
         if ($aRows = $this->oDb->select($sql)) {
             foreach ($aRows as $oRow) {
@@ -194,7 +194,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 
     /**
      * DeleteMailingQueue
-     * 
+     *
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */

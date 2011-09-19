@@ -48,9 +48,11 @@
     <h1>{$aLang.ml_title}</h1>
     <form action="" method="post" id="mlForm">
         <input type="hidden" name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" />
+        <input type="hidden" name="mailing_id" value="{$oMailing->getMailingId()}" />
         <div class="fieldset">
             <label for="subject">{$aLang.talk_create_title}:</label>
-            <input class="w100p" name="subject" id="subject" type="text"  size="55" value="{$_aRequest.subject}"/>
+            <input class="w100p" name="subject" id="subject" type="text"  size="55"
+                   value="{$oMailing->getMailingTitle()}"/>
         </div>
         <div class="fieldset">
             <div class="note"></div>
@@ -81,16 +83,21 @@
                     <a href="#" onclick="showImgUploadForm(); return false;" class="button"><img src="{cfg name='path.static.skin'}/images/panel/img.png" title="{$aLang.panel_image}"></a>
                 </div>
             {/if}
-            <textarea name="talk_text" id="talk_text" rows="12">{$_aRequest.talk_text}</textarea>
+            <textarea name="talk_text" id="talk_text" cols="40" rows="12">{$oMailing->getMailingText()}</textarea>
         </div>
+        {if $bEditMode}
+            <div class="fieldset">
+                <span class="input-note">{$aLang.ml_edit_warning}</span>
+            </div>
+        {/if}
         <div class="fieldset">
             {$aLang.ml_sex}:
             <br />
-            <input name="aSex[]" type="checkbox" value="man" checked="checked"/> — {$aLang.user_stats_sex_man}
+            <input name="aSex[]" type="checkbox" value="man" {if in_array('man', $oMailing->getMailingSex())}checked="checked"{/if} /> — {$aLang.user_stats_sex_man}
             <br />
-            <input name="aSex[]" type="checkbox" value="woman" checked="checked"/> — {$aLang.user_stats_sex_woman}
+            <input name="aSex[]" type="checkbox" value="woman" {if in_array('woman', $oMailing->getMailingSex())}checked="checked"{/if}/> — {$aLang.user_stats_sex_woman}
             <br />
-            <input name="aSex[]" type="checkbox" value="other" checked="checked"/> — {$aLang.user_stats_sex_other}
+            <input name="aSex[]" type="checkbox" value="other" {if in_array('other', $oMailing->getMailingSex())}checked="checked"{/if}/> — {$aLang.user_stats_sex_other}
             <br />
         </div>
         {if $sTemplateWebPathPluginL10n}
@@ -98,20 +105,21 @@
                 {$aLang.ml_lang}:
                 <br />
                 {foreach from=$aLangs key=sLangKey item=sLangText}
-                    <input name="aLangs[]" type="checkbox" value="{$sLangKey}" checked="checked"/> —
+                    <input name="aLangs[]" type="checkbox" value="{$sLangKey}" {if in_array($sLangKey, $oMailing->getMailingLang())}checked="checked"{/if} /> —
                     <img src="{$sTemplateWebPathPluginL10n}images/flags/{$sLangKey}.png" alt="{$sLangKey}"/>
                     <br />
                 {/foreach}
             </div>
         {/if}
-        <div class="fieldset">
-            <input name="active" id="active" type="checkbox" checked="checked"/> — {$aLang.ml_active}
-            <br />
+        {if !$bEditMode}
+            <div class="fieldset">
+                <input name="active" id="active" type="checkbox" checked="checked"/> — {$aLang.ml_active}
+            {/if}
         </div>
         <p class="buttons">
-            <input type="submit" name="send" value="{$aLang.talk_create_submit}" onclick="ajaxMailingSend('subject','talk_text', 'active'); return false;"/>
-            <input type="submit" name="submit_preview" value="{$aLang.topic_create_submit_preview}" onclick="$('text_preview').getParent('div').setStyle('display','block'); ajaxTextPreview('talk_text',false); return false;" />
-            <span class="loader" style="display:none;">{$aLang.ml_loader_text}</span>
+            <input type="submit" name="submit_button_save" value="{$aLang.ml_save}"/>
+            <input type="submit" name="submit_preview" value="{$aLang.topic_create_submit_preview}" />
+            <input type="reset"  value="{$aLang.ml_cancel}" onclick="location.href='{$sLinkList}'; return false;" />
         </p>
     </form>
 </div>

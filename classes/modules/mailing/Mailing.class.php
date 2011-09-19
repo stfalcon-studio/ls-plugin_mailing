@@ -30,8 +30,7 @@ class PluginMailing_ModuleMailing extends Module
      *
      * @return void
      */
-    public function Init()
-    {
+    public function Init() {
         $this->_oMapper = Engine::GetMapper(__CLASS__);
     }
 
@@ -41,8 +40,7 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return PluginMailing_ModuleMailing_EntityMailing|boolean
      */
-    public function AddMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
-    {
+    public function AddMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
 
         // Set default array of options
         if (!$oMailing->getMailingSex()) {
@@ -60,12 +58,11 @@ class PluginMailing_ModuleMailing extends Module
 
     /**
      * Update mailing
-     * 
+     *
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    public function UpdateMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
-    {
+    public function UpdateMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
         return $this->_oMapper->UpdateMailing($oMailing);
     }
 
@@ -74,8 +71,7 @@ class PluginMailing_ModuleMailing extends Module
      * @param int $sMailingId
      * @return boolean
      */
-    public function DeleteMailing($sMailingId)
-    {
+    public function DeleteMailing($sMailingId) {
         return $this->_oMapper->DeleteMailing($sMailingId);
     }
 
@@ -85,8 +81,7 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    public function AddMailToQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing)
-    {
+    public function AddMailToQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
 
         // Get recipients ids
         $aUserIdTo = $this->PluginMailing_Users_GetUsersIdList($oMailing->getMailingSex(), $oMailing->getMailingLang(), $oMailing->getSendByUserId());
@@ -105,23 +100,20 @@ class PluginMailing_ModuleMailing extends Module
                 }
             }
         }
-        
+
         // Update number of successful addition
         $oMailing->setMailingCount($i);
 
-        $this->UpdateMailing($oMailing);
-
-        return $oMailing;
+        return $this->UpdateMailing($oMailing);
     }
 
     /**
      * Delete mail from queue by array id
-     * 
+     *
      * @param array $sArrayId
      * @return boolean
      */
-    public function DeleteMailFromQueueByArrayId($sArrayId)
-    {
+    public function DeleteMailFromQueueByArrayId($sArrayId) {
         return $this->_oMapper->DeleteMailFromQueueByArrayId($sArrayId);
     }
 
@@ -130,8 +122,7 @@ class PluginMailing_ModuleMailing extends Module
      *
      * @return PluginMailing_ModuleMailing_EntityMailing
      */
-    public function GetMailings()
-    {
+    public function GetMailings() {
         return $this->_oMapper->GetMailings();
     }
 
@@ -140,8 +131,7 @@ class PluginMailing_ModuleMailing extends Module
      * @param int $sMailingId
      * @return PluginMailing_ModuleMailing_EntityMailing
      */
-    public function GetMailingById($sMailingId)
-    {
+    public function GetMailingById($sMailingId) {
         return $this->_oMapper->GetMailingById($sMailingId);
     }
 
@@ -151,8 +141,7 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    public function DeleteMailingQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing)
-    {
+    public function DeleteMailingQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
         return $this->_oMapper->DeleteMailingQueue($oMailing);
     }
 
@@ -161,20 +150,18 @@ class PluginMailing_ModuleMailing extends Module
      *
      * @return PluginMailing_ModuleMailing_EntityMailingQueue
      */
-    public function GetMailsFromQueue()
-    {
+    public function GetMailsFromQueue() {
         return $this->_oMapper->GetMailsFromQueue();
     }
 
     /**
      * Set talk id for mail_queue
-     * 
+     *
      * @param array $aTalkIds
      * @return boolean
      */
-    public function SetTalkIdForSendedMail($MailId, $TalkId)
-    {
+    public function SetTalkIdForSendedMail($MailId, $TalkId) {
         return $this->_oMapper->SetTalkIdForSendedMail($MailId, $TalkId);
     }
-    
+
 }
