@@ -13,7 +13,7 @@
  */
 
 /**
- * Handle message content and send it 
+ * Handle message content and send it
  */
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(dirname(__FILE__))));
 $sDirRoot = dirname(dirname(dirname(dirname(dirname(__FILE__)))));
@@ -64,7 +64,6 @@ if ($oEngine->User_IsAuthorization()) {
             $oMailing->setSendByUserId($oUserCurrent->getId());
             $oMailing->setMailingTitle($sTitle);
             $oMailing->setMailingText($sText);
-            $oMailing->setMailingCount(count($aUserIdTo));
             $oMailing->setMailingActive($sActive);
             $oMailing->setMailingSex($aSex);
             $oMailing->setMailingLang($aLangs);
