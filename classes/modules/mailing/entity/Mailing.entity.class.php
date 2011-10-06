@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.4.2
+ * @LiveStreet Version: 0.5.0
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -18,43 +18,35 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
     /**
      * Getters
      */
-    public function getMailingId()
-    {
+    public function getMailingId() {
         return (int) $this->_aData['mailing_id'];
     }
 
-    public function getSendByUserId()
-    {
+    public function getSendByUserId() {
         return (int) $this->_aData['send_by_user_id'];
     }
 
-    public function getMailingTitle()
-    {
+    public function getMailingTitle() {
         return $this->_aData['mailing_title'];
     }
 
-    public function getMailingText()
-    {
+    public function getMailingText() {
         return $this->_aData['mailing_text'];
     }
 
-    public function getMailingDate()
-    {
+    public function getMailingDate() {
         return $this->_aData['mailing_date'];
     }
 
-    public function getMailingCount()
-    {
+    public function getMailingCount() {
         return (int) isset($this->_aData['mailing_count']) ? $this->_aData['mailing_count'] : 0;
     }
 
-    public function getMailingActive()
-    {
+    public function getMailingActive() {
         return (bool) isset($this->_aData['mailing_active']) ? $this->_aData['mailing_active'] : true;
     }
 
-    public function getMailingSex()
-    {
+    public function getMailingSex() {
         if (!isset($this->_aData['mailing_sex'])) {
             return array();
         } else {
@@ -62,56 +54,46 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
         }
     }
 
-    public function getMailingLang()
-    {
+    public function getMailingLang() {
         return (array) unserialize($this->_aData['mailing_lang']);
     }
 
     /**
      * Setters
      */
-    public function setMailingId($data)
-    {
+    public function setMailingId($data) {
         $this->_aData['mailing_id'] = (int) $data;
     }
 
-    public function setSendByUserId($data)
-    {
+    public function setSendByUserId($data) {
         $this->_aData['send_by_user_id'] = (int) $data;
     }
 
-    public function setMailingTitle($data)
-    {
+    public function setMailingTitle($data) {
         $this->_aData['mailing_title'] = $data;
     }
 
-    public function setMailingText($data)
-    {
+    public function setMailingText($data) {
         $this->_aData['mailing_text'] = $data;
     }
 
-    public function setMailingDate($data)
-    {
+    public function setMailingDate($data) {
         $this->_aData['mailing_date'] = $data;
     }
 
-    public function setMailingCount($data)
-    {
+    public function setMailingCount($data) {
         $this->_aData['mailing_count'] = (int) $data;
     }
 
-    public function setMailingActive($data)
-    {
+    public function setMailingActive($data) {
         $this->_aData['mailing_active'] = (bool) $data;
     }
 
-    public function setMailingSex(array $data)
-    {
+    public function setMailingSex(array $data) {
         $this->_aData['mailing_sex'] = serialize($data);
     }
 
-    public function setMailingLang(array $data)
-    {
+    public function setMailingLang(array $data) {
         $this->_aData['mailing_lang'] = serialize($data);
     }
 
