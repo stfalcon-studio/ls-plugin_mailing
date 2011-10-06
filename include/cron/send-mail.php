@@ -7,12 +7,10 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.4.2
+ * @LiveStreet Version: 0.5.0
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
-define('SYS_HACKER_CONSOLE', false);
-
 $sDirRoot = dirname(realpath((dirname(__FILE__)) . "/../../../"));
 set_include_path(get_include_path() . PATH_SEPARATOR . $sDirRoot);
 chdir($sDirRoot);
@@ -28,8 +26,7 @@ class SendMailingNotifies extends Cron
     /**
      * Выбираем пул заданий и рассылаем по ним e-mail
      */
-    public function Client()
-    {
+    public function Client() {
         // Выбираем из очереди
         $aMails = $this->oEngine->PluginMailing_ModuleMailing_GetMailsFromQueue();
 
@@ -37,7 +34,7 @@ class SendMailingNotifies extends Cron
             echo PHP_EOL . "No mailings are found.";
             return false;
         }
-        
+
         foreach ($aMails as $oMail) {
             /* @var $oMail PluginMailing_ModuleMailing_EntityMailingQueue */
 
@@ -50,7 +47,7 @@ class SendMailingNotifies extends Cron
             $oTalk->setDateLast(date("Y-m-d H:i:s"));
             $oTalk->setUserIp(Config::Get('IP_SENDER'));
             $oTalk = $this->oEngine->Talk_AddTalk($oTalk);
-            
+
             // Отправляем пользователю
             $oTalkUser = Engine::GetEntity('Talk_TalkUser');
             $oTalkUser->setTalkId($oTalk->getId());
@@ -75,7 +72,7 @@ class SendMailingNotifies extends Cron
 
 }
 
-$sLockFilePath=Config::Get('sys.cache.dir').'mailing.lock';
+$sLockFilePath = Config::Get('sys.cache.dir') . 'mailing.lock';
 /**
  * Создаем объект крон-процесса,
  * передавая параметром путь к лок-файлу

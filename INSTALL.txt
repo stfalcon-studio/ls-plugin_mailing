@@ -7,9 +7,8 @@
 После чего необходимо перейти на страницу http://example.com/admin/plugins
 (вместо example.com указывайте адрес своего сайта) и активировать плагин mailing
 
-ВАЖНО: после активации плагина нужно очистить кеш сайта.
+Для того, чтобы сообщения отправлялись, нужно поцепить на cron скрипт рассылки
+/plugins/mailing/include/cron/send-mail.php.
 
-Для того, чтобы сообщения отправлялись нужно поцепить на cron скрипт 
-рассылки /plugins/mailing/include/cron/send-mail.php. 
-У нас он запускается каждые 5ть минут:
+У нас он запускается каждые 5 минут:
 */5 * * * * /var/www/example.com/www/plugins/mailing/include/cron/send-mail.php
