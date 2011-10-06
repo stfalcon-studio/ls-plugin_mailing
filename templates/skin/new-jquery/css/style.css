@@ -6,9 +6,9 @@
     display: inline;
 }
 
-#mlForm textarea {
-    height: 200px;
+#mlForm .markItUp {
     margin-bottom: 5px;
+    width: 99%;
 }
 
 dl.mlInfo {
