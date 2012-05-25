@@ -27,7 +27,13 @@ class PluginMailing extends Plugin
 {
 
     public $aInherits = array(
-        'mapper' => array('ModuleTalk_MapperTalk' => '_ModuleTalk_MapperTalk')
+        'mapper' => array(
+            'ModuleTalk_MapperTalk' => '_ModuleTalk_MapperTalk',
+            'ModuleUser_MapperUser' => '_ModuleUser_MapperUser'
+            ),
+        'module' => array(
+            'ModuleUser' => '_ModuleUser'
+        )
     );
 
     /**

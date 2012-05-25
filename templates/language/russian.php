@@ -61,5 +61,16 @@ return array(
     'ml_error_unable_to_edit' => 'Не удалось отредактировать рассылку',
     'ml_error_unable_to_stop' => 'Не удалось остановить рассылку',
     'ml_error_unable_to_start' => 'Не удалось запустить рассылку',
+
+    'ml_send_talk' => 'Создавать ЛС',
+    'settings_tuning_notice_administration' => 'Получать рассылку от администрации',
+
+    'ml_usub_noparams' => 'Отсутствует email или hash',
+    'ml_usub_nouser' => 'Пользователь по данным параметрам не найден',
+    'ml_usub_sys_error' => 'Не удалось отписатся, обратитесь пожалуйста к администратору',
+    'ml_usub_complete' => 'Вы успешно отписались от рассылки дайджестов',
+    'ml_usub_already' => 'Вы уже отписывались от рассылки',
+
+    'unsub_notice' => '<p><a href="' . Config::Get('path.root.web') . '/mailing/unsubscribe?email=%%email%%&hash=%%hash%%">Отписаться</a></p>'
 );
 
