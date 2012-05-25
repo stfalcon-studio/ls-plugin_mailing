@@ -58,6 +58,19 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
         return (array) unserialize($this->_aData['mailing_lang']);
     }
 
+    public function getFilter()
+    {
+        if (!isset($this->_aData['filter'])) {
+            return array();
+        }
+        return $this->_aData['filter'];
+    }
+
+    public function getMailingTalk()
+    {
+        return $this->_aData['mailing_talk'];
+    }
+
     /**
      * Setters
      */
@@ -95,6 +108,11 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
 
     public function setMailingLang(array $data) {
         $this->_aData['mailing_lang'] = serialize($data);
+    }
+
+    public function setMailingTalk($data)
+    {
+        $this->_aData['mailing_talk'] = (bool)$data;
     }
 
 }

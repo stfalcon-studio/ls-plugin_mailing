@@ -30,7 +30,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return void
      */
-    public function Init() {
+    public function Init()
+    {
 
         $this->Viewer_AddHtmlTitle($this->Lang_Get('ml_title'));
         $this->SetDefaultEvent('main');
@@ -41,12 +42,14 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return void
      */
-    protected function RegisterEvent() {
+    protected function RegisterEvent()
+    {
         $this->AddEvent('main', 'EventAdd');
         $this->AddEvent('edit', 'EventAdd');
         $this->AddEvent('list', 'EventList');
         $this->AddEvent('delete', 'EventDelete');
         $this->AddEvent('activate', 'EventActivate');
+        $this->AddEvent('unsubscribe', 'EventUnsubscribe');
     }
 
     /**
@@ -54,7 +57,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    public function EventList() {
+    public function EventList()
+    {
 
         $this->CheckCurrentUser();
 
@@ -69,7 +73,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    public function EventAdd() {
+    public function EventAdd()
+    {
 
         $this->CheckCurrentUser();
 
@@ -101,92 +106,51 @@ class PluginMailing_ActionMailing extends ActionPlugin
         $this->Viewer_Assign("sLinkList", $sLinkList);
 
         if (isPost('submit_button_save')) {
+            if (!$this->CheckMailingFields()) {
+                return false;
+            }
             $this->Security_ValidateSendForm();
 
-            $bOk = true;
-
-            // Активность рассылки
             $bActive = (bool) getRequest('active', false, 'post');
+            $sTitle = getRequest('subject', null, 'post');
+            $sText = htmlspecialchars(getRequest('talk_text', null, 'post'), ENT_QUOTES, 'UTF-8', true);
+            $aSex = getRequest('aSex', array(), 'post');
 
             $this->Viewer_Assign('bActive', $bActive);
 
-            // Заголовок
-            $sTitle = getRequest('subject', null, 'post');
-
-            if (!func_check($sTitle, 'text', 2, 200)) {
-                $this->Message_AddError($this->Lang_Get('talk_create_title_error'), $this->Lang_Get('error'));
-                $bOk = false;
-            }
-
-            $oMailing->setMailingTitle($sTitle);
-
-            // Текст письма
-            $sText = htmlspecialchars(getRequest('talk_text', null, 'post'), ENT_QUOTES, 'UTF-8', true);
-
-            if (!func_check($sText, 'text', 2, 10000)) {
-                $this->Message_AddError($this->Lang_Get('talk_create_text_error'), $this->Lang_Get('error'));
-                $bOk = false;
-            }
-
-            $oMailing->setMailingText($sText);
-
-            // Фильтр по половому признаку
-            $aSex = getRequest('aSex', array(), 'post');
-
-            if (!is_array(getRequest('aSex')) || count(getRequest('aSex')) == 0) {
-                $this->Message_AddError($this->Lang_Get('ml_sex_select_error'), $this->Lang_Get('error'));
-                $bOk = false;
-            }
-
-            $oMailing->setMailingSex($aSex);
-
-            // Фильтр по языку пользователя
             $aLangs = getRequest('aLangs', array(), 'post');
-
-            if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
-
-                if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
-                    $this->Message_AddError($this->Lang_Get('ml_lang_select_error'), $this->Lang_Get('error'));
-                    $bOk = false;
-                }
-            }
-
+            $oMailing->setMailingTitle($sTitle);
+            $oMailing->setMailingText($sText);
+            $oMailing->setMailingSex($aSex);
             $oMailing->setMailingLang($aLangs);
+            $oMailing->setMailingTalk(getRequest('talk'));
+            $oUserCurrent = $this->User_GetUserCurrent();
 
-            if ($bOk) {
+            $oMailing->setSendByUserId($oUserCurrent->GetId());
 
-                $oUserCurrent = $this->User_GetUserCurrent();
+            if ($bEditMode) {
+                // удаляем старый список рассылки
+                $this->PluginMailing_ModuleMailing_DeleteMailingQueue($oMailing);
 
-                $oMailing->setSendByUserId($oUserCurrent->GetId());
-
-                if ($bEditMode) {
-                    // удаляем старый список рассылки
-                    $this->PluginMailing_ModuleMailing_DeleteMailingQueue($oMailing);
-
-                    // пересоздаем очередь рассылки с новыми
-                    if (!$this->PluginMailing_ModuleMailing_AddMailToQueue($oMailing)) {
-
-                        $this->Message_AddErrorSingle($this->Lang_Get("ml_error_unable_to_edit"), $this->Lang_Get('error'), true);
-                    } else {
-                        $this->Message_AddNotice($this->Lang_Get('ml_ok_edit'), $this->Lang_Get('attention'), true);
-                    }
+                // пересоздаем очередь рассылки с новыми
+                if (!$this->PluginMailing_ModuleMailing_AddMailToQueue($oMailing)) {
+                    $this->Message_AddErrorSingle($this->Lang_Get("ml_error_unable_to_edit"), $this->Lang_Get('error'), true);
                 } else {
-
-                    $oMailing->setMailingActive($bActive);
-
-                    $oMailing->setMailingDate(date("Y-m-d H:i:s"));
-
-                    if (!$this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
-                        $this->Message_AddErrorSingle($this->Lang_Get("ml_error_unable_to_add"), $this->Lang_Get('error'), true);
-                    } else {
-                        $sNoticeText = $bActive ? $this->Lang_Get('ml_ok') : $this->Lang_Get('ml_ok_inactive');
-                        $this->Message_AddNotice($sNoticeText, $this->Lang_Get('attention'), true);
-                    }
+                    $this->Message_AddNotice($this->Lang_Get('ml_ok_edit'), $this->Lang_Get('attention'), true);
                 }
+            } else {
+                $oMailing->setMailingActive($bActive);
+                $oMailing->setMailingDate(date("Y-m-d H:i:s"));
 
-
-                Router::Location($sLinkList);
+                if (!$this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
+                    $this->Message_AddErrorSingle($this->Lang_Get("ml_error_unable_to_add"), $this->Lang_Get('error'), true);
+                } else {
+                    $sNoticeText = $bActive ? $this->Lang_Get('ml_ok') : $this->Lang_Get('ml_ok_inactive');
+                    $this->Message_AddNotice($sNoticeText, $this->Lang_Get('attention'), true);
+                }
             }
+
+            Router::Location($sLinkList);
         }
 
         $this->Viewer_Assign('oMailing', $oMailing);
@@ -199,7 +163,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    public function EventActivate() {
+    public function EventActivate()
+    {
         $this->Security_ValidateSendForm();
         $this->CheckCurrentUser();
 
@@ -226,7 +191,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    public function EventDelete() {
+    public function EventDelete()
+    {
         $this->Security_ValidateSendForm();
         $this->CheckCurrentUser();
 
@@ -244,14 +210,81 @@ class PluginMailing_ActionMailing extends ActionPlugin
     }
 
     /**
+     * Unsubscribe user
+     *
+     * @return void
+     */
+    public function EventUnsubscribe()
+    {
+        $sEmail = getRequest('email');
+        $sHash = getRequest('hash');
+        if (!$sHash || !$sEmail) {
+            $this->Message_AddError($this->Lang_Get('ml_usub_noparams'), $this->Lang_Get('error'));
+            return;
+        }
+        // Find user
+        if (!$oUser = $this->User_GetUserByMail($sEmail)) {
+            $this->Message_AddError($this->Lang_Get('ml_usub_nouser'), $this->Lang_Get('error'));
+            return;
+        }
+        // Check hash
+        if ($oUser->getUserNoDigestHash() != $sHash) {
+            $this->Message_AddError($this->Lang_Get('ml_usub_nouser'), $this->Lang_Get('error'));
+            return;
+            // Check current state
+        } else if ($oUser->getUserNoDigest()) {
+            $this->Message_AddError($this->Lang_Get('ml_usub_already'), $this->Lang_Get('error'));
+            return;
+        }
+
+        $oUser->setUserNoDigest(1);
+        // Save
+        if (!$this->User_UpdateSubscription($oUser)) {
+            $this->Message_AddError($this->Lang_Get('ml_usub_sys_error'), $this->Lang_Get('error'));
+        } else {
+            $this->Message_AddNotice($this->Lang_Get('ml_usub_complete'), $this->Lang_Get('attention'));
+        }
+    }
+
+    protected function CheckMailingFields()
+    {
+        $bOk = true;
+
+        if (!func_check(getRequest('subject'), 'text', 2, 200)) {
+            $this->Message_AddError($this->Lang_Get('talk_create_title_error'));
+            $bOk = false;
+        }
+
+        if (!func_check(getRequest('talk_text'), 'text', 2, 1000000)) {
+            $this->Message_AddError($this->Lang_Get('talk_create_text_error'));
+            $bOk = false;
+        }
+
+        if (!is_array(getRequest('aSex')) || count(getRequest('aSex')) == 0) {
+            $this->Message_AddError($this->Lang_Get('ml_sex_select_error'));
+            $bOk = false;
+        }
+
+        if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
+            if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
+                $this->Message_AddError($this->Lang_Get('ml_lang_select_error'));
+                $bOk = false;
+            }
+        }
+
+        return $bOk;
+    }
+
+    /**
      * Проверяет текущего пользователя
      *
      * @return object
      */
-    protected function CheckCurrentUser() {
+    protected function CheckCurrentUser()
+    {
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form
-            return Router::Action('error'); // Redirect to the error page
+            return Router::Location('error'); // Redirect to the error page
         }
 
         return $oUser;
