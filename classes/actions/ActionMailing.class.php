@@ -74,8 +74,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $sText = $this->Text_Parser(getRequest('talk_text', null, 'post'));
             $sTitle = getRequest('subject', null, 'post');
             $sActive = getRequest('active', null, 'post');
-
-            $aLangs = getRequest('aLangs', null, 'post');
+            
+            $aLangs = getRequest('aLangs', array(), 'post');
             $aSex = getRequest('aSex', null, 'post');
 
 
@@ -239,7 +239,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
      */
     protected function StartMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
     {
-
+        
         $oUserCurrent = $this->User_GetUserCurrent();
         $oMailing->setSendByUserId($oUserCurrent->getId());
         if (!$this->PluginMailing_ModuleMailing_AddMailToQueue($oMailingQueue)) {

@@ -1,0 +1,35 @@
+#mlForm {
+    display: inline;
+}
+
+dl.mlInfo {
+    margin:0 auto;
+    clear:both;
+    overflow:hidden;
+    width: 250px;
+}
+dl.mlInfo dt {
+    margin:0;
+    padding:0;
+    float:left;
+    width:28%;
+    font-weight: bold;
+}
+dl.mlInfo dd {
+    margin:0;
+    padding:0;
+    float:right;
+    width:72%;
+}
+
+
+#mlForm .loader {
+    background: url("../images/loader.gif") no-repeat 0 0 transparent;
+    font-size: 11px;
+    line-height: 16px;
+    padding: 2px 0 2px 21px;
+}
+
+#mlForm .fieldset{
+    padding-bottom: 20px;
+}

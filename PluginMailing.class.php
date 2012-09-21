@@ -32,7 +32,8 @@ class PluginMailing extends Plugin
             'ModuleUser_MapperUser' => '_ModuleUser_MapperUser'
             ),
         'module' => array(
-            'ModuleUser' => '_ModuleUser'
+            'ModuleUser' => '_ModuleUser',
+            'ModuleTalk' => '_ModuleTalk'
         )
     );
 
@@ -65,7 +66,7 @@ class PluginMailing extends Plugin
      */
     public function Init()
     {
-
+        $this->Viewer_Assign("sTemplateWebPathPluginMailing", Plugin::GetTemplateWebPath(__CLASS__));
     }
 
 }
