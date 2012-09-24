@@ -27,7 +27,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
      */
     public function Init()
     {
-        $this->Viewer_AddHtmlTitle($this->Lang_Get('ml_title'));
+        $this->Viewer_AddHtmlTitle($this->Lang_Get('plugin.mailing.ml_title'));
         $this->SetDefaultEvent('main');
     }
 
@@ -92,10 +92,10 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $oMailing->setMailingTalk(getRequest('talk'));
 
             if ($this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
-                $this->Message_AddNoticeSingle($this->Lang_Get("ml_ok"));
+                $this->Message_AddNoticeSingle($this->Lang_Get("plugin.mailing.ml_ok"));
                 func_header_location(Router::GetPath('mailing') . "list");
             } else {
-                $this->Message_AddErrorSingle($this->Lang_Get("mailing_error_unable_to add"));
+                $this->Message_AddErrorSingle($this->Lang_Get("plugin.mailing.mailing_error_unable_to add"));
                 return;
             }
         }
@@ -182,7 +182,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             //}
 
             if (!$this->PluginMailing_ModuleMailing_UpdateMailing($oMailing)) {
-                $this->Message_AddErrorSingle($this->Lang_Get("mailing_error_unable_to_edit"));
+                $this->Message_AddErrorSingle($this->Lang_Get("plugin.mailing.mailing_error_unable_to_edit"));
             }
             func_header_location(Router::GetPath('mailing') . "list");
         }
@@ -222,7 +222,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
 
             $oMailing->setMailingDate(date("Y-m-d H:i:s"));
             if (!$this->PluginMailing_ModuleMailing_ActivateMailing($oMailing)) {
-                $this->Message_AddErrorSingle($this->Lang_Get("mailing_error_unable_to_edit"));
+                $this->Message_AddErrorSingle($this->Lang_Get("plugin.mailing.mailing_error_unable_to_edit"));
             }
             func_header_location(Router::GetPath('mailing') . "list");
         }
@@ -257,23 +257,23 @@ class PluginMailing_ActionMailing extends ActionPlugin
         $bOk = true;
 
         if (!func_check(getRequest('subject'), 'text', 2, 200)) {
-            $this->Message_AddError($this->Lang_Get('talk_create_title_error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.talk_create_title_error'));
             $bOk = false;
         }
 
         if (!func_check(getRequest('talk_text'), 'text', 2, 1000000)) {
-            $this->Message_AddError($this->Lang_Get('talk_create_text_error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.talk_create_text_error'));
             $bOk = false;
         }
 
         if (!is_array(getRequest('aSex')) || count(getRequest('aSex')) == 0) {
-            $this->Message_AddError($this->Lang_Get('ml_sex_select_error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.ml_sex_select_error'));
             $bOk = false;
         }
 
         if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
             if (!is_array(getRequest('aLangs')) || count(getRequest('aLangs')) == 0) {
-                $this->Message_AddError($this->Lang_Get('ml_lang_select_error'));
+                $this->Message_AddError($this->Lang_Get('plugin.mailing.ml_lang_select_error'));
                 $bOk = false;
             }
         }
@@ -304,7 +304,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
 
         if (isset($_REQUEST['delete_mailing'])) {
             if (!$this->PluginMailing_ModuleMailing_DeleteMailing($oMailing->getMailingId())) {
-                $this->Message_AddErrorSingle($this->Lang_Get("mailing_error_unable_to_delete"));
+                $this->Message_AddErrorSingle($this->Lang_Get("plugin.mailing.mailing_error_unable_to_delete"));
             }
             func_header_location(Router::GetPath('mailing') . "list");
         }
