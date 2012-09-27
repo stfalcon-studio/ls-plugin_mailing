@@ -84,12 +84,10 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $oMailing->setSendByUserId($oUser->getId());
             $oMailing->setMailingTitle($sTitle);
             $oMailing->setMailingText($sText);
-//            $oMailing->setMailingCount(count($aUserIdTo));
             $oMailing->setMailingActive($sActive);
             $oMailing->setMailingSex($aSex);
             $oMailing->setMailingLang($aLangs);
             $oMailing->setMailingDate(date("Y-m-d H:i:s"));
-            $oMailing->setMailingTalk(getRequest('talk'));
 
             if ($this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
                 $this->Message_AddNoticeSingle($this->Lang_Get("ml_ok"));
