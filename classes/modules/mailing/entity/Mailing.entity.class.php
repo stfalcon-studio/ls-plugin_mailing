@@ -77,7 +77,7 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
 
     public function getMailingTalk()
     {
-        return $this->_aData['mailing_talk'];
+        return (bool) isset($this->_aData['mailing_talk']) ? $this->_aData['mailing_talk'] : true;
     }
 
     /**
