@@ -94,11 +94,14 @@
                 {/foreach}
             </div>
         {/if}
+        <div class="fieldset">
+            <input id="talk" name="talk" type="checkbox" value="1" {if ($oMailing->getMailingTalk())}checked="checked"{/if}/> — {$aLang.ml_send_talk}
+        </div>
         {if !$bEditMode}
             <div class="fieldset">
                 <input name="active" id="active" type="checkbox" checked="checked"/> — {$aLang.ml_active}
-            {/if}
-        </div>
+            </div>
+        {/if}
         <p class="buttons">
             <input type="submit" name="submit_button_save" value="{$aLang.ml_save}"/>
             <input type="submit" name="submit_preview" value="{$aLang.topic_create_submit_preview}" />
