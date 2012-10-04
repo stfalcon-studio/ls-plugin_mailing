@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 0.4.2
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -30,7 +30,8 @@ class PluginMailing_ModuleMailing extends Module
      *
      * @return void
      */
-    public function Init() {
+    public function Init()
+    {
         $this->_oMapper = Engine::GetMapper(__CLASS__);
     }
 
@@ -40,20 +41,24 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return PluginMailing_ModuleMailing_EntityMailing|boolean
      */
-    public function AddMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
-
+    public function AddMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
+    {
         // Set default array of options
         if (!$oMailing->getMailingSex()) {
             $oMailing->setMailingSex(array('man', 'woman', 'other'));
         }
 
-        // Get recipients ids
+        // Save mailing
         if ($sId = $this->_oMapper->AddMailing($oMailing)) {
             $oMailing->setMailingId($sId);
-            $this->AddMailToQueue($oMailing);
-            return $oMailing;
+        } else {
+            return false;
         }
-        return false;
+
+        // add mailing to queue
+        $this->AddMailToQueue($oMailing);
+
+        return $oMailing;
     }
 
     /**
@@ -62,7 +67,8 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    public function UpdateMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
+    public function UpdateMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
+    {
         return $this->_oMapper->UpdateMailing($oMailing);
     }
 
@@ -71,7 +77,8 @@ class PluginMailing_ModuleMailing extends Module
      * @param int $sMailingId
      * @return boolean
      */
-    public function DeleteMailing($sMailingId) {
+    public function DeleteMailing($sMailingId)
+    {
         return $this->_oMapper->DeleteMailing($sMailingId);
     }
 
@@ -81,30 +88,90 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    public function AddMailToQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
+    public function AddMailToQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing)
+    {
 
         // Get recipients ids
-        $aUserIdTo = $this->PluginMailing_Users_GetUsersIdList($oMailing->getMailingSex(), $oMailing->getMailingLang(), $oMailing->getSendByUserId());
-
+        $aUsersTo = $this->User_GetUsersIdList($oMailing->getMailingSex(), $oMailing->getMailingLang(), $oMailing->getSendByUserId(), $oMailing->getFilter());
 
         // Return if recipients list is empty
-        $i = 0;
-        if (!empty($aUserIdTo)) {
-            foreach ($aUserIdTo as $iUserId) {
+        $iAdded = 0;
+        if (count($aUsersTo)) {
+            foreach ($aUsersTo as $oUserTo) {
+                if (!$oUserTo->getMail()) {
+                    continue;
+                }
+
                 // Put mail into Mailing queue
                 $oMailingQueue = new PluginMailing_ModuleMailing_EntityMailingQueue();
                 $oMailingQueue->setMailingId($oMailing->getMailingId());
-                $oMailingQueue->setUserId($iUserId);
+                $oMailingQueue->setUserId($oUserTo->getId());
+                $oMailingQueue->setSended(false);
+
                 if ($this->_oMapper->addMailToQueue($oMailingQueue)) {
-                    $i++;
+                    $iAdded++;
                 }
             }
         }
 
         // Update number of successful addition
-        $oMailing->setMailingCount($i);
+        $oMailing->setMailingCount($iAdded);
+        $oMailing->setMailingSended(0);
+        $this->UpdateMailing($oMailing);
 
+        return $oMailing;
+    }
+
+    /**
+     * Activate mailing
+     *
+     * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
+     * @return boolean
+     */
+    public function ActivateMailing($oMailing)
+    {
         return $this->UpdateMailing($oMailing);
+    }
+
+    /**
+     * Send queue mail
+     *
+     * @param PluginMailing_ModuleMailing_EntityMailingQueue $oMail
+     */
+    public function SendMail($oMail)
+    {
+        if ($oMail->getMailingTalk()) {
+            if (!isset($_SERVER['REMOTE_ADDR'])) {
+                $_SERVER['REMOTE_ADDR'] = Config::Get('IP_SENDER');
+            }
+            // Создаем новый разговор
+            $sTitle = $oMail->getMailingTitle();
+            $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
+
+            $oUserToMail = $this->User_GetUserById($oMail->getUserId());
+            $oUserCurrent = $this->User_GetUserById($oMail->getSendByUserId());
+
+            $oTalk=$this->Talk_SendTalk($sTitle,$sText,$oUserCurrent,array($oUserToMail),false,false);
+
+            $this->Notify_SendTalkNew($oUserToMail, $oUserCurrent, $oTalk);
+            $this->SetTalkIdForSendedMail($oMail->getId(), $oTalk->getId());
+            $this->SetSended($oMail->getId());
+//            для версии LS_VERSION 0.5.1 
+//            прописали текущего пользователя в модулях talk
+            $this->Talk_SetUserCurrent($oUserCurrent);
+            $this->Talk_DeleteTalkUserByArray($oTalk->getId(),$oUserCurrent->getId());
+        } else {
+            $oUserTo = $this->User_GetUserById($oMail->getUserId());
+            $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
+            $this->Lang_SetLang($oUserTo->getUserLang());
+            $sText .= $this->Lang_Get('unsub_notice', array('email' => $oUserTo->getMail(), 'hash' => $oUserTo->getUserNoDigestHash()));
+            $this->Mail_SetAdress($oUserTo->getMail(), $oUserTo->getLogin());
+            $this->Mail_SetSubject($oMail->getMailingTitle());
+            $this->Mail_SetBody($sText);
+            $this->Mail_setHTML();
+            $this->Mail_Send();
+            $this->SetSended($oMail->getId());
+        }
     }
 
     /**
@@ -113,7 +180,8 @@ class PluginMailing_ModuleMailing extends Module
      * @param array $sArrayId
      * @return boolean
      */
-    public function DeleteMailFromQueueByArrayId($sArrayId) {
+    public function DeleteMailFromQueueByArrayId($sArrayId)
+    {
         return $this->_oMapper->DeleteMailFromQueueByArrayId($sArrayId);
     }
 
@@ -122,7 +190,8 @@ class PluginMailing_ModuleMailing extends Module
      *
      * @return PluginMailing_ModuleMailing_EntityMailing
      */
-    public function GetMailings() {
+    public function GetMailings()
+    {
         return $this->_oMapper->GetMailings();
     }
 
@@ -131,7 +200,8 @@ class PluginMailing_ModuleMailing extends Module
      * @param int $sMailingId
      * @return PluginMailing_ModuleMailing_EntityMailing
      */
-    public function GetMailingById($sMailingId) {
+    public function GetMailingById($sMailingId)
+    {
         return $this->_oMapper->GetMailingById($sMailingId);
     }
 
@@ -141,17 +211,30 @@ class PluginMailing_ModuleMailing extends Module
      * @param PluginMailing_ModuleMailing_EntityMailing $oMailing
      * @return boolean
      */
-    public function DeleteMailingQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing) {
+    public function DeleteMailingQueue(PluginMailing_ModuleMailing_EntityMailing $oMailing)
+    {
         return $this->_oMapper->DeleteMailingQueue($oMailing);
     }
 
     /**
      * Get mails from queue for sending, limit in config
      *
-     * @return PluginMailing_ModuleMailing_EntityMailingQueue
+     * @return \PluginMailing_ModuleMailing_EntityMailingQueue
      */
-    public function GetMailsFromQueue() {
+    public function GetMailsFromQueue()
+    {
         return $this->_oMapper->GetMailsFromQueue();
+    }
+
+    /**
+     * Get mails from queue by mailing id
+     *
+     * @param int $iMailingId
+     * @return \PluginMailing_ModuleMailing_EntityMailingQueue
+     */
+    public function GetMailsFromQueueByMailingId($iMailingId)
+    {
+        return $this->_oMapper->GetMailsFromQueueByMailingId($iMailingId);
     }
 
     /**
@@ -160,8 +243,20 @@ class PluginMailing_ModuleMailing extends Module
      * @param array $aTalkIds
      * @return boolean
      */
-    public function SetTalkIdForSendedMail($MailId, $TalkId) {
+    public function SetTalkIdForSendedMail($MailId, $TalkId)
+    {
         return $this->_oMapper->SetTalkIdForSendedMail($MailId, $TalkId);
+    }
+
+    /**
+     * Set mail in queue sended
+     *
+     * @param int $MailId
+     * @return boolean
+     */
+    public function SetSended($MailId)
+    {
+        return $this->_oMapper->SetSended($MailId);
     }
 
 }

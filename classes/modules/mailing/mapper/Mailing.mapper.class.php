@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 0.4.2
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -18,6 +18,7 @@
  */
 class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 {
+
     /**
      * Add mailing
      *
@@ -26,22 +27,22 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function AddMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
     {
-        $sql = "INSERT INTO " . Config::Get('db.table.mailing') . "
-		     ( send_by_user_id,
-                       mailing_title,
-                       mailing_text,
-                       mailing_count,
-                       mailing_active,
-                       mailing_sex,
-                       mailing_date,
-                       mailing_lang
-                     )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        $sql = "INSERT INTO
+                    " . Config::Get('db.table.mailing') . "
+                (
+                    send_by_user_id,
+                    mailing_title,
+                    mailing_text,
+                    mailing_count,
+                    mailing_active,
+                    mailing_sex,
+                    mailing_date,
+                    mailing_lang,
+                    mailing_talk
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
-        if ($iId = $this->oDb->query($sql,
-                        $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(),
-                        $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()),
-                        $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()))) {
+        if ($iId = $this->oDb->query($sql, $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(), $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()), $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingTalk())) {
             return $iId;
         }
         return false;
@@ -55,21 +56,22 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function UpdateMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
     {
-        $sql = "UPDATE " . Config::Get('db.table.mailing') . "
-		   SET send_by_user_id = ?,
-                       mailing_title = ?,
-                       mailing_text = ?,
-                       mailing_count = ?d,
-                       mailing_active = ?d,
-                       mailing_sex = ?,
-                       mailing_date = ?,
-                       mailing_lang = ?
-                 WHERE mailing_id = ?d
+        $sql = "UPDATE
+                    " . Config::Get('db.table.mailing') . "
+                SET
+                    send_by_user_id = ?,
+                    mailing_title = ?,
+                    mailing_text = ?,
+                    mailing_count = ?d,
+                    mailing_active = ?d,
+                    mailing_sex = ?,
+                    mailing_date = ?,
+                    mailing_lang = ?,
+                    mailing_talk = ?d
+                 WHERE
+                    mailing_id = ?d
 		";
-        if ($this->oDb->query($sql,
-                        $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(),
-                        $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()),
-                        $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingId())) {
+        if ($this->oDb->query($sql, $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(), $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()), $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingTalk(), $oMailing->getMailingId())) {
             return true;
         }
         return false;
@@ -83,8 +85,10 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function DeleteMailing($sMailingId)
     {
-        $sql =  "DELETE FROM " . Config::Get('db.table.mailing') . "
-		  WHERE mailing_id = ?d
+        $sql = "DELETE FROM
+                    " . Config::Get('db.table.mailing') . "
+                WHERE
+                    mailing_id = ?d
                 ";
         if ($this->oDb->query($sql, $sMailingId)) {
             return true;
@@ -100,12 +104,16 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function AddMailToQueue(PluginMailing_ModuleMailing_EntityMailingQueue $oMailingQueue)
     {
-        $sql = "INSERT INTO " . Config::Get('db.table.mailing_queue') . "
-		     ( mailing_id, user_id )
-                VALUES (?d, ?d)
+        $sql = "INSERT INTO
+                    " . Config::Get('db.table.mailing_queue') . "
+                (
+                    mailing_id,
+                    user_id,
+                    sended
+                )
+                VALUES (?d, ?d, ?d)
                ";
-        if ($this->oDb->query($sql,
-                        $oMailingQueue->getMailingId(), $oMailingQueue->getUserId())) {
+        if ($this->oDb->query($sql, $oMailingQueue->getMailingId(), $oMailingQueue->getUserId(), $oMailingQueue->getSended())) {
             return true;
         }
         return false;
@@ -114,18 +122,26 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
     /**
      * Get mails from queue for sending, limit in config
      *
-     * @return PluginMailing_ModuleMailing_EntityMailingQueue
+     * @return \PluginMailing_ModuleMailing_EntityMailingQueue
      */
     public function GetMailsFromQueue()
     {
-        $sql = "SELECT m.*, mq.*, u.user_mail
-                  FROM " . Config::Get('db.table.mailing_queue') . " as mq
-                  LEFT JOIN " . Config::Get('db.table.user') . " u ON u.user_id = mq.user_id
-                  LEFT JOIN " . Config::Get('db.table.mailing') . " m ON m.mailing_id = mq.mailing_id
-                 WHERE m.mailing_active = 1
-                   AND mq.talk_id IS NULL
-		 ORDER BY mq.id
-		 LIMIT ?d";
+        $sql = "SELECT
+                    m.*, mq.*, u.user_mail
+                FROM
+                    " . Config::Get('db.table.mailing_queue') . " as mq
+                LEFT JOIN
+                    " . Config::Get('db.table.user') . " u ON u.user_id = mq.user_id
+                LEFT JOIN
+                    " . Config::Get('db.table.mailing') . " m ON m.mailing_id = mq.mailing_id
+                WHERE
+                    m.mailing_active = 1
+                 AND
+                    mq.sended = 0
+                ORDER BY
+                    mq.id
+                LIMIT
+                    ?d";
         $aMails = array();
         if ($aRows = $this->oDb->select($sql, Config::Get('MAIL_LIMIT'))) {
             foreach ($aRows as $oRow) {
@@ -134,6 +150,36 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
             return $aMails;
         }
         return false;
+    }
+
+    /**
+     * Get mails from queue by mailing id
+     *
+     * @param int $iMailingId
+     * @return \PluginMailing_ModuleMailing_EntityMailingQueue|boolean
+     */
+    public function GetMailsFromQueueByMailingId($iMailingId)
+    {
+        $sql = "SELECT
+                    m.*, mq.*, u.user_mail
+                FROM
+                    " . Config::Get('db.table.mailing_queue') . " as mq
+                LEFT JOIN
+                    " . Config::Get('db.table.user') . " u ON u.user_id = mq.user_id
+                LEFT JOIN
+                    " . Config::Get('db.table.mailing') . " m ON m.mailing_id = mq.mailing_id
+                WHERE
+                    mq.mailing_id = ?d
+                ORDER BY
+                    mq.id
+                ";
+        $aMails = array();
+        if ($aRows = $this->oDb->select($sql, $iMailingId)) {
+            foreach ($aRows as $oRow) {
+                $aMails[] = new PluginMailing_ModuleMailing_EntityMailingQueue($oRow);
+            }
+        }
+        return $aMails;
     }
 
     /**
@@ -159,11 +205,14 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function GetMailings()
     {
-        $sql = "SELECT m.*, count(mq.talk_id) as mailing_send
-                  FROM " . Config::Get('db.table.mailing') . " m
-                  LEFT JOIN " . Config::Get('db.table.mailing_queue') . " mq
-                         ON mq.mailing_id = m.mailing_id
-                 GROUP BY m.mailing_id
+        $sql = "SELECT
+                    m.*,
+                    count(mq.sended) as mailing_send
+                FROM
+                    " . Config::Get('db.table.mailing') . " m
+                LEFT JOIN
+                    " . Config::Get('db.table.mailing_queue') . " mq ON mq.mailing_id = m.mailing_id AND (mq.sended = 1 OR mq.talk_id IS NOT NULL)
+                GROUP BY m.mailing_id
                 ";
 
         $aMailing = array();
@@ -183,9 +232,12 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function GetMailingById($sMailingId)
     {
-        $sql = "SELECT *
-                  FROM " . Config::Get('db.table.mailing') . "
-                 WHERE mailing_id = ?d";
+        $sql = "SELECT
+                    *
+                FROM
+                    " . Config::Get('db.table.mailing') . "
+                WHERE
+                    mailing_id = ?d";
         if ($oRow = $this->oDb->selectRow($sql, $sMailingId)) {
             return new PluginMailing_ModuleMailing_EntityMailing($oRow);
         }
@@ -209,13 +261,44 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
         return false;
     }
 
-    public function  SetTalkIdForSendedMail($MailId, $TalkId)
+    /**
+     * Set talk id for mail
+     *
+     * @param int $MailId
+     * @param int $TalkId
+     * @return boolean
+     */
+    public function SetTalkIdForSendedMail($MailId, $TalkId)
     {
-        $sql = "UPDATE " . Config::Get('db.table.mailing_queue') . "
-                   SET talk_id = ?d
-                 WHERE id = ?d
+        $sql = "UPDATE
+                    " . Config::Get('db.table.mailing_queue') . "
+                SET
+                    talk_id = ?d
+                WHERE
+                    id = ?d
 		";
         if ($this->oDb->query($sql, $TalkId, $MailId)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set mail in queue sended
+     *
+     * @param int $MailId
+     * @return boolean
+     */
+    public function SetSended($MailId)
+    {
+        $sql = "UPDATE
+                    " . Config::Get('db.table.mailing_queue') . "
+                SET
+                    sended = 1
+                WHERE
+                    id = ?d
+		";
+        if ($this->oDb->query($sql, $MailId)) {
             return true;
         }
         return false;
