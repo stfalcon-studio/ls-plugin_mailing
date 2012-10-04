@@ -1,7 +1,7 @@
 {assign var="bNoSidebar" value=true}
 {include file='header.tpl' menu='talk'}
 <style type="text/css" media='all'> 
-    @import url({$sTemplateWebPathPlugin}/css/style.css); 
+    @import url({$sTemplateWebPathPluginMailing}/css/style.css); 
 </style>
 
 {if $oConfig->GetValue('view.tinymce')}
