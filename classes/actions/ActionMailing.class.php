@@ -318,28 +318,28 @@ class PluginMailing_ActionMailing extends ActionPlugin
         $sEmail = getRequest('email');
         $sHash  = getRequest('hash');
         if (!$sHash || !$sEmail) {
-            $this->Message_AddError($this->Lang_Get('lsdigest_usub_noparams'), $this->Lang_Get('error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_noparams'), $this->Lang_Get('error'));
             return;
         }
 
         if (!$oUser = $this->User_GetUserByMail($sEmail)) {
-            $this->Message_AddError($this->Lang_Get('lsdigest_usub_nouser'), $this->Lang_Get('error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_nouser'), $this->Lang_Get('error'));
             return;
         }
         
         if ($oUser->getUserNoDigestHash() != $sHash) {
-            $this->Message_AddError($this->Lang_Get('lsdigest_usub_nouser'), $this->Lang_Get('error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_nouser'), $this->Lang_Get('error'));
             return;
         } else if ($oUser->getUserNoDigest()) {
-            $this->Message_AddError($this->Lang_Get('lsdigest_usub_already'), $this->Lang_Get('error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_already'), $this->Lang_Get('error'));
             return;
 
         }
 
         if (!$this->User_UnsubscribeUser($oUser)) {
-            $this->Message_AddError($this->Lang_Get('lsdigest_usub_sys_error'), $this->Lang_Get('error'));
+            $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_sys_error'), $this->Lang_Get('error'));
         } else {
-            $this->Message_AddNotice($this->Lang_Get('lsdigest_usub_complete'), $this->Lang_Get('attention'));
+            $this->Message_AddNotice($this->Lang_Get('plugin.mailing.lsdigest_usub_complete'), $this->Lang_Get('attention'));
         }
 
     }
