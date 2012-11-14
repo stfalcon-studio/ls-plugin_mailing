@@ -74,7 +74,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $sText = $this->Text_Parser(getRequest('talk_text', null, 'post'));
             $sTitle = getRequest('subject', null, 'post');
             $sActive = getRequest('active', null, 'post');
-            
+
             $aLangs = getRequest('aLangs', array(), 'post');
             $aSex = getRequest('aSex', null, 'post');
 
@@ -88,6 +88,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $oMailing->setMailingSex($aSex);
             $oMailing->setMailingLang($aLangs);
             $oMailing->setMailingDate(date("Y-m-d H:i:s"));
+            $oMailing->setMailingTalk(getRequest('talk', null, 'post'));
 
             if ($this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
                 $this->Message_AddNoticeSingle($this->Lang_Get("ml_ok"));
@@ -237,7 +238,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
      */
     protected function StartMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
     {
-        
+
         $oUserCurrent = $this->User_GetUserCurrent();
         $oMailing->setSendByUserId($oUserCurrent->getId());
         if (!$this->PluginMailing_ModuleMailing_AddMailToQueue($oMailingQueue)) {
@@ -324,7 +325,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $this->Message_AddError($this->Lang_Get('lsdigest_usub_nouser'), $this->Lang_Get('error'));
             return;
         }
-        
+
         if ($oUser->getUserNoDigestHash() != $sHash) {
             $this->Message_AddError($this->Lang_Get('lsdigest_usub_nouser'), $this->Lang_Get('error'));
             return;
