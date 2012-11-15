@@ -14,9 +14,9 @@
                 <dd>
                     {if ($oMailing->getMailingSend() == $oMailing->getMailingCount())}
                         {$aLang.plugin.mailing.ml_send_all}
-                        {elseif ($oMailing->getMailingActive())}
+                    {elseif ($oMailing->getMailingActive())}
                         {$aLang.plugin.mailing.ml_ready}
-                        {else}
+                    {else}
                         {$aLang.plugin.mailing.ml_wait}
                     {/if}
                     {if $oMailing->getMailingDirect()}{$aLang.plugin.mailing.ml_send_direct}{/if}
