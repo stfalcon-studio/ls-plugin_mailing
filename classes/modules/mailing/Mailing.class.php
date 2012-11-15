@@ -153,13 +153,18 @@ class PluginMailing_ModuleMailing extends Module
 
             $oTalk=$this->Talk_SendTalk($sTitle,$sText,$oUserCurrent,array($oUserToMail),false,false);
 
-            $this->Notify_SendTalkNew($oUserToMail, $oUserCurrent, $oTalk);
-            $this->SetTalkIdForSendedMail($oMail->getId(), $oTalk->getId());
-            $this->SetSended($oMail->getId());
-//            для версии LS_VERSION 0.5.1 
-//            прописали текущего пользователя в модулях talk
-            $this->Talk_SetUserCurrent($oUserCurrent);
-            $this->Talk_DeleteTalkUserByArray($oTalk->getId(),$oUserCurrent->getId());
+            if ($oTalk) {
+                $this->Notify_SendTalkNew($oUserToMail, $oUserCurrent, $oTalk);
+                $this->SetTalkIdForSendedMail($oMail->getId(), $oTalk->getId());
+                $this->SetSended($oMail->getId());
+
+                $this->Talk_SetUserCurrent($oUserCurrent);
+                $this->Talk_DeleteTalkUserByArray($oTalk->getId(),$oUserCurrent->getId());
+
+                return true;
+            }
+
+            return false;
         } else {
             $oUserTo = $this->User_GetUserById($oMail->getUserId());
             $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
@@ -169,8 +174,10 @@ class PluginMailing_ModuleMailing extends Module
             $this->Mail_SetSubject($oMail->getMailingTitle());
             $this->Mail_SetBody($sText);
             $this->Mail_setHTML();
-            $this->Mail_Send();
-            $this->SetSended($oMail->getId());
+            if ($this->Mail_Send()) {
+                return $this->SetSended($oMail->getId());
+            }
+            return false;
         }
     }
 

@@ -36,6 +36,7 @@ class GenerateUnsubHash extends Cron
         }
 
         $this->oEngine->User_SetUnSubHash();
+        $this->oEngine->Cache_Clean();
     }
 
 }

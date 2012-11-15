@@ -38,10 +38,12 @@ class SendMailingNotifies extends Cron
             return false;
         }
 
+        $sendCount = 0;
         foreach ($aMails as $oMail) {
-            /* @var $oMail PluginMailing_ModuleMailing_EntityMailingQueue */
-            $this->oEngine->PluginMailing_ModuleMailing_SendMail($oMail);
+            $sendCount += (int) $this->oEngine->PluginMailing_ModuleMailing_SendMail($oMail);
         }
+
+        echo PHP_EOL . "- {$sendCount} of " . count($aMails) . " messages sended successful." . PHP_EOL ;
     }
 
 }
