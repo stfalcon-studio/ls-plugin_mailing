@@ -12,11 +12,15 @@
                 <dd>{$oMailing->getMailingTitle()}</dd>
                 <dt>{$aLang.plugin.mailing.ml_status}: </dt>
                 <dd>
-                    {if ($oMailing->getMailingActive())}
+                    {if ($oMailing->getMailingSend() == $oMailing->getMailingCount())}
+                        {$aLang.plugin.mailing.ml_send_all}
+                        {elseif ($oMailing->getMailingActive())}
                         {$aLang.plugin.mailing.ml_ready}
-                    {else}
+                        {else}
                         {$aLang.plugin.mailing.ml_wait}
                     {/if}
+                    {if $oMailing->getMailingDirect()}{$aLang.plugin.mailing.ml_send_direct}{/if}
+                    {if $oMailing->getMailingTalk()}{$aLang.plugin.mailing.ml_send_talk}{/if}
                 </dd>
             </dl>
         </div>
