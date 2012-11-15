@@ -157,7 +157,8 @@ class PluginMailing_ModuleMailing extends Module
                 $this->Notify_SendTalkNew($oUserToMail, $oUserCurrent, $oTalk);
                 $this->SetTalkIdForSendedMail($oMail->getId(), $oTalk->getId());
                 $this->SetSended($oMail->getId());
-
+//            для версии LS_VERSION 0.5.1
+//            прописали текущего пользователя в модулях talk
                 $this->Talk_SetUserCurrent($oUserCurrent);
                 $this->Talk_DeleteTalkUserByArray($oTalk->getId(),$oUserCurrent->getId());
 

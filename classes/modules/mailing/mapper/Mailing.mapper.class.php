@@ -234,11 +234,11 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
     {
         $sql = "SELECT
                     m.*,
-                    count(mq.sended) as mailing_send
+                    count(mq.sended) AS mailing_send
                 FROM
-                    " . Config::Get('db.table.mailing') . " m
+                    " . Config::Get('db.table.mailing') . " AS m
                 LEFT JOIN
-                    " . Config::Get('db.table.mailing_queue') . " mq ON mq.mailing_id = m.mailing_id AND (mq.sended = 1 OR mq.talk_id IS NOT NULL)
+                    " . Config::Get('db.table.mailing_queue') . " AS mq ON mq.mailing_id = m.mailing_id AND (mq.sended = 1 OR mq.talk_id IS NOT NULL)
                 WHERE
                     m.mailing_id = ?d
                 GROUP BY m.mailing_id";
