@@ -26,6 +26,9 @@
 
 ИСТОРИЯ ВЕРСИЙ
 --------------
+v0.3.1
+- Это последняя версия, которая работает с LiveStreet v0.5.1. Скачать её можно по ссылке  https://github.com/stfalcon-studio/ls-plugin_mailing/zipball/ls-0.5
+
 v0.3.0
 - Переписан для работы с LiveStreet не ниже версии 0.5.0
 - Работает с Mootools и jQuery шаблонами

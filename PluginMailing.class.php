@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 0.5.1
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -27,7 +27,14 @@ class PluginMailing extends Plugin
 {
 
     public $aInherits = array(
-        'mapper' => array('ModuleTalk_MapperTalk' => '_ModuleTalk_MapperTalk')
+        'mapper' => array(
+            'ModuleTalk_MapperTalk' => '_ModuleTalk_MapperTalk',
+            'ModuleUser_MapperUser' => '_ModuleUser_MapperUser'
+            ),
+        'module' => array(
+            'ModuleUser' => '_ModuleUser',
+            'ModuleTalk' => '_ModuleTalk'
+        )
     );
 
     /**
@@ -35,7 +42,8 @@ class PluginMailing extends Plugin
      *
      * @return boolean
      */
-    public function Activate() {
+    public function Activate()
+    {
         $resutls = $this->ExportSQL(dirname(__FILE__) . '/activate.sql');
         $this->Cache_Clean();
         return $resutls['result'];
@@ -46,7 +54,8 @@ class PluginMailing extends Plugin
      *
      * @return boolean
      */
-    public function Deactivate() {
+    public function Deactivate()
+    {
         $resutls = $this->ExportSQL(dirname(__FILE__) . '/deactivate.sql');
         $this->Cache_Clean();
         return $resutls['result'];
@@ -57,8 +66,9 @@ class PluginMailing extends Plugin
      *
      * @return void
      */
-    public function Init() {
-        $this->Viewer_AppendStyle(Plugin::GetTemplateWebPath(__CLASS__) . 'css/style.css');
+    public function Init()
+    {
+        $this->Viewer_Assign("sTemplateWebPathPluginMailing", Plugin::GetTemplateWebPath(__CLASS__));
     }
 
 }
