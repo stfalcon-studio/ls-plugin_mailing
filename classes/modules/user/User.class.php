@@ -42,6 +42,7 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
     }
 
     /**
+     * Set unsub hash for user
      *
      * @return boolean
      */
@@ -50,6 +51,12 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
         return $this->oMapper->SetUnSubHash($oUser);
     }
 
+    /**
+     * Generate unsub hash for user after registration
+     *
+     * @param ModuleUser_EntityUser $oUser
+     * @return boolean
+     */
     public function Add(ModuleUser_EntityUser $oUser)
     {
         if ($oUser = parent::Add($oUser)) {
@@ -78,6 +85,12 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
         return $this->oMapper->UnsubscribeUser($oUser);
     }
 
+    /**
+     * Update subscription settings
+     *
+     * @param ModuleUser_EntityUser $oUser
+     * @return type
+     */
     public function UpdateSubscription($oUser)
     {
         return $this->oMapper->UpdateSubscription($oUser);

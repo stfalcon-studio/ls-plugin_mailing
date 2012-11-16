@@ -37,7 +37,11 @@ class PluginMailing_ModuleMailing_EntityMailingQueue extends Entity
         return $this->_aData['sended'];
     }
 
-    
+    public function getSended()
+    {
+        return $this->_aData['sended'];
+    }
+
 
     /**
      * Setters
@@ -62,6 +66,10 @@ class PluginMailing_ModuleMailing_EntityMailingQueue extends Entity
         $this->_aData['sended'] = $data;
     }
 
-    
+    public function setSended($data)
+    {
+        $this->_aData['sended'] = $data;
+    }
+
 
 }

@@ -48,6 +48,7 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         if ($iSkipUserId) {
             $sql .= " AND `user_id` <> " . (int) $iSkipUserId;
         }
+        // lang params
         if (count($aLangs)) {
             $sql .= ' AND `user_lang` IN (?a)';
             return $this->oDb->selectCol($sql, $aSex, $aLangs);
@@ -56,6 +57,7 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
     }
 
     /**
+     * Set unsub hash for user
      *
      * @return boolean
      */
@@ -106,6 +108,12 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
 
     }
 
+    /**
+     * Update subscription
+     *
+     * @param ModuleUser_EntityUser $oUser
+     * @return boolean
+     */
     public function UpdateSubscription($oUser)
     {
         $sql = "UPDATE
@@ -117,5 +125,6 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
                 ";
         return $this->oDb->query($sql, $oUser->getUserNoDigest(), $oUser->getId());
     }
+
 }
 

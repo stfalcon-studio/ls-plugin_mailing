@@ -47,7 +47,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
     }
 
     /**
-     * Send messages
+     * List of mailings
      *
      * @return mixed
      */
@@ -123,8 +123,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
      *
      * @return mixed
      */
-    public function EventEdit()
-    {
+    public function EventAdd() {
 
         $oUser = $this->User_GetUserCurrent(); // Current user
         if (!$oUser || !$oUser->isAdministrator()) { //If user is admin show the form

@@ -18,7 +18,6 @@
  */
 class PluginMailing_ModuleMailing_MapperMailing extends Mapper
 {
-
     /**
      * Add mailing
      *
@@ -189,8 +188,11 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
      */
     public function DeleteMailFromQueueByArrayId($aMailingId)
     {
-        $sql = "DELETE FROM " . Config::Get('db.table.mailing_queue') . "
-                 WHERE id IN(?a)
+        $sql = "DELETE
+                FROM
+                    " . Config::Get('db.table.mailing_queue') . "
+                WHERE
+                    id IN(?a)
 		";
         if ($this->oDb->query($sql, $aMailingId)) {
             return true;
