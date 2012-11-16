@@ -44,9 +44,9 @@ class PluginMailing extends Plugin
      */
     public function Activate()
     {
-        $resutls = $this->ExportSQL(dirname(__FILE__) . '/activate.sql');
+        $results = $this->ExportSQL(dirname(__FILE__) . '/activate.sql');
         $this->Cache_Clean();
-        return $resutls['result'];
+        return $results['result'];
     }
 
     /**
@@ -56,19 +56,9 @@ class PluginMailing extends Plugin
      */
     public function Deactivate()
     {
-        $resutls = $this->ExportSQL(dirname(__FILE__) . '/deactivate.sql');
+        $results = $this->ExportSQL(dirname(__FILE__) . '/deactivate.sql');
         $this->Cache_Clean();
-        return $resutls['result'];
-    }
-
-    /**
-     * Plugin Initialization
-     *
-     * @return void
-     */
-    public function Init()
-    {
-        $this->Viewer_Assign("sTemplateWebPathPluginMailing", Plugin::GetTemplateWebPath(__CLASS__));
+        return $results['result'];
     }
 
 }
