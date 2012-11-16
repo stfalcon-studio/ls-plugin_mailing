@@ -127,7 +127,7 @@
 
         <p class="buttons">
             <input type="submit" name="submit" value="{$aLang.talk_create_submit}" />
-            <input type="submit" name="submit_preview" value="{$aLang.topic_create_submit_preview}" onclick="$('text_preview').getParent('div').setStyle('display','block'); ajaxTextPreview('talk_text',false); return false;" />
+            <input type="submit" name="submit_preview" value="{$aLang.topic_create_submit_preview}" onclick="$('#text_preview').parent().show(); ls.tools.textPreview('talk_text',false); return false;" />
         </p>
     </form>
 </div>
