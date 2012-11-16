@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 1.0.1
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -43,19 +43,22 @@ class PluginMailing_ModuleMailing extends Module
      */
     public function AddMailing(PluginMailing_ModuleMailing_EntityMailing $oMailing)
     {
-
         // Set default array of options
         if (!$oMailing->getMailingSex()) {
             $oMailing->setMailingSex(array('man', 'woman', 'other'));
         }
 
-        // Get recipients ids
+        // Save mailing
         if ($sId = $this->_oMapper->AddMailing($oMailing)) {
             $oMailing->setMailingId($sId);
-            $this->AddMailToQueue($oMailing);
-            return $oMailing;
+        } else {
+            return false;
         }
-        return false;
+
+        // add mailing to queue
+        $this->AddMailToQueue($oMailing);
+
+        return $oMailing;
     }
 
     /**
@@ -138,47 +141,42 @@ class PluginMailing_ModuleMailing extends Module
     public function SendMail($oMail)
     {
         if ($oMail->getMailingTalk()) {
+            if (!isset($_SERVER['REMOTE_ADDR'])) {
+                $_SERVER['REMOTE_ADDR'] = Config::Get('IP_SENDER');
+            }
             // Создаем новый разговор
-            $oTalk = Engine::GetEntity('Talk');
-            $oTalk->setUserId($oMail->getSendByUserId());
-            $oTalk->setTitle($oMail->getMailingTitle());
-            $oTalk->setText(htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES));
-            $oTalk->setDate(date("Y-m-d H:i:s"));
-            $oTalk->setDateLast(date("Y-m-d H:i:s"));
-            $oTalk->setUserIp(Config::Get('IP_SENDER'));
-            $oTalk = $this->Talk_AddTalk($oTalk);
+            $sTitle = $oMail->getMailingTitle();
+            $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
 
-            // Отправляем пользователю
-            $oTalkUser = Engine::GetEntity('Talk_TalkUser');
-            $oTalkUser->setTalkId($oTalk->getId());
-            $oTalkUser->setUserId($oMail->getUserId());
-            $oTalkUser->setDateLast(null);
-            $this->Talk_AddTalkUser($oTalkUser);
-
-            // Отправка самому себе, чтобы можно было читать ответ
-            $oTalkUser = Engine::GetEntity('Talk_TalkUser');
-            $oTalkUser->setTalkId($oTalk->getId());
-            $oTalkUser->setUserId($oMail->getSendByUserId());
-            $oTalkUser->setDateLast(date("Y-m-d H:i:s"));
-            $this->Talk_AddTalkUser($oTalkUser);
-
-            // Отправляем оповещение на email
             $oUserToMail = $this->User_GetUserById($oMail->getUserId());
             $oUserCurrent = $this->User_GetUserById($oMail->getSendByUserId());
-            $this->Notify_SendTalkNew($oUserToMail, $oUserCurrent, $oTalk);
-            $this->SetTalkIdForSendedMail($oMail->getId(), $oTalk->getId());
-            $this->SetSended($oMail->getId());
+
+            $oTalk=$this->Talk_SendTalk($sTitle,$sText,$oUserCurrent,array($oUserToMail),false,false);
+
+            if ($oTalk) {
+                $this->Notify_SendTalkNew($oUserToMail, $oUserCurrent, $oTalk);
+                $this->SetTalkIdForSendedMail($oMail->getId(), $oTalk->getId());
+                $this->SetSended($oMail->getId());
+
+                return true;
+            }
+
+            return false;
+
         } else {
             $oUserTo = $this->User_GetUserById($oMail->getUserId());
             $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
-
-            $sText .= $this->Lang_Get('unsub_notice', array('email' => $oUserTo->getMail(), 'hash' => $oUserTo->getUserNoDigestHash()));
+            $this->Lang_SetLang($oUserTo->getUserLang());
+            $sText .= $this->Lang_Get('plugin.mailing.unsub_notice', array('email' => $oUserTo->getMail(), 'hash' => $oUserTo->getUserNoDigestHash()));
             $this->Mail_SetAdress($oUserTo->getMail(), $oUserTo->getLogin());
             $this->Mail_SetSubject($oMail->getMailingTitle());
             $this->Mail_SetBody($sText);
             $this->Mail_setHTML();
-            $this->Mail_Send();
-            $this->SetSended($oMail->getId());
+
+            if ($this->Mail_Send()) {
+                return $this->SetSended($oMail->getId());
+            }
+            return false;
         }
     }
 
@@ -227,11 +225,22 @@ class PluginMailing_ModuleMailing extends Module
     /**
      * Get mails from queue for sending, limit in config
      *
-     * @return PluginMailing_ModuleMailing_EntityMailingQueue
+     * @return \PluginMailing_ModuleMailing_EntityMailingQueue
      */
     public function GetMailsFromQueue()
     {
         return $this->_oMapper->GetMailsFromQueue();
+    }
+
+    /**
+     * Get mails from queue by mailing id
+     *
+     * @param int $iMailingId
+     * @return \PluginMailing_ModuleMailing_EntityMailingQueue
+     */
+    public function GetMailsFromQueueByMailingId($iMailingId)
+    {
+        return $this->_oMapper->GetMailsFromQueueByMailingId($iMailingId);
     }
 
     /**
