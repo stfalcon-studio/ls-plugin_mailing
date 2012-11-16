@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 1.0.1
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -17,7 +17,8 @@
  *
  * Select all users IDs from Mapper
  */
-class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser {
+class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
+{
 
     /**
      * Mapper for PluginMailing_ModuleUsers
@@ -31,7 +32,7 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser {
      * @param array $aLangs
      * @param int   $iSkipUserId
      * @param array $aFilter
-     * @return \ModuleUser_EntityUser
+     * @return array
      */
     public function GetUsersIDList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array())
     {
@@ -66,6 +67,24 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser {
         return false;
     }
 
+    public function GetUserByMailAndHash($sMail, $sHash)
+    {
+        if ($oUser = $this->GetUserByMail($sMail)) {
+            if ($oUser->getUserNoDigestHash() == $sHash) {
+                return $oUser;
+            }
+        }
+
+        return false;
+    }
+
+    public function UnsubscribeUser($oUser)
+    {
+        $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('user_update'));
+		$this->Cache_Delete("user_{$oUser->getId()}");
+        return $this->oMapper->UnsubscribeUser($oUser);
+    }
+
     /**
      * Update subscription settings
      *
@@ -76,6 +95,11 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser {
     {
         return $this->oMapper->UpdateSubscription($oUser);
     }
+    
+    public function SetUserCurrent(ModuleUser_EntityUser $oUser)
+    {
+        $this->oUserCurrent = $oUser;
+    }        
 
 
 }

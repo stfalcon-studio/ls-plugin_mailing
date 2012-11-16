@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 1.0.1
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -37,7 +37,7 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         $sql = 'SELECT `user_id`
                   FROM ' . Config::Get('db.table.user') . '
                  WHERE `user_profile_sex` IN (?a)
-                   AND user_no_digest = 0
+                   AND user_no_digest = 0 
                ';
 
         foreach ($aFilter as $key => $value) {
@@ -93,6 +93,19 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             $bRes = false;
         }
         return $bRes;
+    }
+
+    public function UnsubscribeUser($oUser)
+    {
+         $sql = "UPDATE
+                        " . Config::Get('db.table.user') . "
+                    SET
+                        user_no_digest = 1
+                    WHERE
+                        user_id = ?d
+                        ";
+        return $this->oDb->query($sql, $oUser->getId());
+
     }
 
     /**

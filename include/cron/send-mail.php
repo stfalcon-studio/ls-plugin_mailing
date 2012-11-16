@@ -7,10 +7,12 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 1.0.1
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
+define('SYS_HACKER_CONSOLE', false);
+
 $sDirRoot = dirname(realpath((dirname(__FILE__)) . "/../../../"));
 set_include_path(get_include_path() . PATH_SEPARATOR . $sDirRoot);
 chdir($sDirRoot);
@@ -26,7 +28,8 @@ class SendMailingNotifies extends Cron
     /**
      * Выбираем пул заданий и рассылаем по ним e-mail
      */
-    public function Client() {
+    public function Client()
+    {
         // Выбираем из очереди
         $aMails = $this->oEngine->PluginMailing_ModuleMailing_GetMailsFromQueue();
 
@@ -35,10 +38,12 @@ class SendMailingNotifies extends Cron
             return false;
         }
 
+        $sendCount = 0;
         foreach ($aMails as $oMail) {
-            /* @var $oMail PluginMailing_ModuleMailing_EntityMailingQueue */
-            $this->oEngine->PluginMailing_ModuleMailing_SendMail($oMail);
+            $sendCount += (int) $this->oEngine->PluginMailing_ModuleMailing_SendMail($oMail);
         }
+
+        echo PHP_EOL . "- {$sendCount} of " . count($aMails) . " messages sended successful." . PHP_EOL ;
     }
 
 }

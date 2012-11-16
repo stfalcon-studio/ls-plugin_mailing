@@ -7,7 +7,7 @@
  * @Description: Mass mailing for users
  * @Author: stfalcon-studio
  * @Author URI: http://stfalcon.com
- * @LiveStreet Version: 0.5.0
+ * @LiveStreet Version: 1.0.1
  * @License: GNU GPL v2, http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  * ----------------------------------------------------------------------------
  */
@@ -126,9 +126,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
     public function GetMailsFromQueue()
     {
         $sql = "SELECT
-                    m.*,
-                    mq.*,
-                    u.user_mail
+                    m.*, mq.*, u.user_mail
                 FROM
                     " . Config::Get('db.table.mailing_queue') . " as mq
                 LEFT JOIN
@@ -162,9 +160,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
     public function GetMailsFromQueueByMailingId($iMailingId)
     {
         $sql = "SELECT
-                    m.*,
-                    mq.*,
-                    u.user_mail
+                    m.*, mq.*, u.user_mail
                 FROM
                     " . Config::Get('db.table.mailing_queue') . " as mq
                 LEFT JOIN
@@ -218,8 +214,7 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
                     " . Config::Get('db.table.mailing') . " m
                 LEFT JOIN
                     " . Config::Get('db.table.mailing_queue') . " mq ON mq.mailing_id = m.mailing_id AND (mq.sended = 1 OR mq.talk_id IS NOT NULL)
-                GROUP BY
-                    m.mailing_id
+                GROUP BY m.mailing_id
                 ";
 
         $aMailing = array();
@@ -240,11 +235,15 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
     public function GetMailingById($sMailingId)
     {
         $sql = "SELECT
-                    *
+                    m.*,
+                    count(mq.sended) AS mailing_send
                 FROM
-                    " . Config::Get('db.table.mailing') . "
+                    " . Config::Get('db.table.mailing') . " AS m
+                LEFT JOIN
+                    " . Config::Get('db.table.mailing_queue') . " AS mq ON mq.mailing_id = m.mailing_id AND (mq.sended = 1 OR mq.talk_id IS NOT NULL)
                 WHERE
-                    mailing_id = ?d";
+                    m.mailing_id = ?d
+                GROUP BY m.mailing_id";
         if ($oRow = $this->oDb->selectRow($sql, $sMailingId)) {
             return new PluginMailing_ModuleMailing_EntityMailing($oRow);
         }
