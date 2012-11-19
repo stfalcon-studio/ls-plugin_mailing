@@ -1,0 +1,3 @@
+Выполнить к БД запросы из update*.sql
+Сгенерировать хеш отписки для уже существующих пользователей, исполнив
+plugins/mailing/include/cron/generate-unsub-hash.php.
