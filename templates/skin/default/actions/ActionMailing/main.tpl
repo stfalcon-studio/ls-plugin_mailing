@@ -32,11 +32,6 @@
 	</script>
 {/if}
 
-
-<div class="topic" style="display: none;">
-    <div class="content" id="text_preview"></div>
-</div>
-
 <div class="topic">
     <h1>{$aLang.plugin.mailing.ml_title}</h1>
     <form action="" method="post" id="mlForm">
@@ -111,6 +106,9 @@
             <input type="submit" name="submit_preview" value="{$aLang.topic_create_submit_preview}" onclick="$('#text_preview').parent().show(); ls.tools.textPreview('talk_text',false); return false;" />
         </p>
     </form>
+</div>
+<div class="topic" style="display: none;">
+    <div class="content" id="text_preview"></div>
 </div>
 
 {include file='footer.tpl'}
