@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/stfalcon-studio/ls-plugin_mailing.png)](https://travis-ci.org/stfalcon-studio/ls-plugin_mailing)
+
 ОПИСАНИЕ
 --------
 
