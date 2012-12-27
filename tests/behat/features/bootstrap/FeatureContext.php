@@ -46,7 +46,6 @@ class FeatureContext extends MinkContext
         }
     }
 
-
     /**
      * @Then /^run generate unsubscribe code$/
      */
@@ -57,6 +56,32 @@ class FeatureContext extends MinkContext
         }
 
         shell_exec("{$this->sDirRoot}/plugins/mailing/include/cron/generate-unsub-hash.php");
+    }
+
+    /**
+     * @Then /^I unsubskribe users$/
+     */
+    public function iUnsubskribeUsers()
+    {
+        $exclude_list = array(".", "..");
+        $directories = array_diff(scandir('/var/mail/sendmail/new'), $exclude_list);
+
+        if (!count($directories)) {
+            throw new ExpectationException('Messages not found on dir', $this->getSession());
+        }
+
+        foreach ($directories as $fileName) {
+            $fileContent = file_get_contents('/var/mail/sendmail/new/' . $fileName );
+
+            $pattern = '/(\/mailing\/unsubscribe\?email=user_[a-z]+\@info.com\&hash=[a-f0-9]{16})"/';
+
+            if ( !preg_match_all($pattern, $fileContent, $link)) {
+                throw new ExpectationException('Link not found on file', $this->getSession());
+            }
+
+            $this->getSession()->visit($this->locatePath($link[1][0]));
+            break;
+        }
     }
 }
 
