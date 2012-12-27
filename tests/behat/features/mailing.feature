@@ -78,3 +78,8 @@ Feature: Mailing plugin standart features BDD
           | 0 / 4 |
 
         Then run script "/plugins/mailing/include/cron/send-mail.php" and result should contain "/4 of 4 messages sended successful/"
+
+        Then the message should cointain:
+        | value |
+        | test subject |
+        | test message for users |

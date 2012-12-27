@@ -83,6 +83,29 @@ class FeatureContext extends MinkContext
             break;
         }
     }
+
+    /**
+     * @Then /^the message should cointain:$/
+     */
+    public function theMessageShouldCointain(TableNode $values)
+    {
+        $exclude_list = array(".", "..");
+        $directories = reset(array_diff(scandir('/var/mail/sendmail/new'), $exclude_list));
+
+        if (!count($directories)) {
+            throw new ExpectationException('Messages not found on dir', $this->getSession());
+        }
+
+        $fileContent = file_get_contents('/var/mail/sendmail/new/' . $directories );
+
+        foreach ($values->getHash() as $genreHash) {
+            $regex  = '/'.preg_quote($genreHash['value'], '/').'/ui';
+            if (!preg_match($regex, $fileContent)) {
+                $message = sprintf('The string "%s" was not found anywhere in message.', $genreHash['value']);
+                throw new ExpectationException($message, $this->getMinkContext()->getSession());
+            }
+        }
+    }
 }
 
 
