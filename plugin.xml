@@ -4,25 +4,16 @@
         <lang name="default">Mailing</lang>
     </name>
     <author>
-        <lang name="default">Web-studio stfalcon.com</lang>
+        <lang name="default">Web studio stfalcon.com</lang>
     </author>
     <homepage>http://stfalcon.com</homepage>
     <version>0.4.0</version>
     <requires>
         <livestreet>1.0</livestreet>
-        <plugins>
-
-        </plugins>
     </requires>
     <description>
         <lang name="default">Mass mailing for users</lang>
         <lang name="russian">Массовая рассылка для пользователей</lang>
         <lang name="ukrainian">Розсилка повідомлень для усіх користувачів</lang>
     </description>
-    <delegate>
-        <module></module>
-        <action></action>
-        <template></template>
-        <entity></entity>
-    </delegate>
 </plugin>
