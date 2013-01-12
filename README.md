@@ -34,6 +34,7 @@
 --------------
 v0.4.0
 - Переписан для работы с LiveStreet не ниже версии 1.0 и темы synio (default)
+- Добавлены BDD тесты и конфиг для Travis CI
 
 v0.3.1
 - Это последняя версия, которая работает с LiveStreet v0.5.1. Скачать её можно по ссылке  https://github.com/stfalcon-studio/ls-plugin_mailing/zipball/ls-0.5
