@@ -10,9 +10,9 @@
 ВАЖНО: после активации плагина нужно очистить кеш сайта.
        для уже существующих пользователей необходимо сгенерировать хеш отписки.
 
-Для генерации хеша отписки необходимо испольнить скрипт /plugins/mailing/include/cron/generate-unsub-hash.php.
-
 Для того, чтобы сообщения отправлялись нужно поцепить на cron скрипт 
 рассылки /plugins/mailing/include/cron/send-mail.php. 
 У нас он запускается каждые 5ть минут:
 */5 * * * * /var/www/example.com/www/plugins/mailing/include/cron/send-mail.php
+
+Для генерации хеша отписки необходимо один раз выполнить скрипт /plugins/mailing/include/cron/generate-unsub-hash.php.
