@@ -67,7 +67,9 @@ before_script:
   - ls -l ./templates/compiled/
   - sleep 5
 
-script: HTTP_APP_ENV=test cd tests/behat/ && php behat.phar --config='../../plugins/mailing/tests/behat/behat.yml' --strict
+script: 
+  - HTTP_APP_ENV=test cd tests/behat/ && php behat.phar
+  - HTTP_APP_ENV=test cd tests/behat/ && php behat.phar --config='../../plugins/mailing/tests/behat/behat.yml' --strict
 
 after_script:
   - sudo chmod a+x $cPath'/plugins/mailing/tests/fixtures/script/test.php'
