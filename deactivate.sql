@@ -1,5 +1,7 @@
 ALTER TABLE `prefix_user` DROP `user_no_digest`;
 ALTER TABLE `prefix_user` DROP `user_no_digest_hash`;
+ALTER TABLE `prefix_user` DROP `user_notice_digest_best_topics_hash`;
+ALTER TABLE `prefix_user` DROP `user_settings_notice_digest_best_topics`;
 
 ALTER TABLE `prefix_mailing` DROP FOREIGN KEY `prefix_mailing_ibfk_1`;
 ALTER TABLE `prefix_mailing_queue` DROP FOREIGN KEY `prefix_mailing_queue_ibfk_1`;

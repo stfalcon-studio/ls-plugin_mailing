@@ -38,11 +38,12 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
                     mailing_sex,
                     mailing_date,
                     mailing_lang,
-                    mailing_talk
+                    mailing_talk,
+                    mailing_type
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
-        if ($iId = $this->oDb->query($sql, $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(), $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()), $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingTalk())) {
+        if ($iId = $this->oDb->query($sql, $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(), $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()), $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingTalk(), $oMailing->getMailingType())) {
             return $iId;
         }
         return false;
@@ -67,11 +68,12 @@ class PluginMailing_ModuleMailing_MapperMailing extends Mapper
                     mailing_sex = ?,
                     mailing_date = ?,
                     mailing_lang = ?,
-                    mailing_talk = ?d
+                    mailing_talk = ?d,
+                    mailing_type = ?
                  WHERE
                     mailing_id = ?d
 		";
-        if ($this->oDb->query($sql, $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(), $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()), $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingTalk(), $oMailing->getMailingId())) {
+        if ($this->oDb->query($sql, $oMailing->getSendByUserId(), $oMailing->getMailingTitle(), $oMailing->getMailingText(), $oMailing->getMailingCount(), $oMailing->getMailingActive(), serialize($oMailing->getMailingSex()), $oMailing->getMailingDate(), serialize($oMailing->getMailingLang()), $oMailing->getMailingTalk(), $oMailing->getMailingId(), $oMailing->getMailingType())) {
             return true;
         }
         return false;

@@ -61,8 +61,10 @@ return array(
     'lsdigest_usub_noparams' => 'Email or hash not found',
     'lsdigest_usub_nouser' => 'User by parameters not found',
     'lsdigest_usub_sys_error' => 'Unable to unsubscribe, contact to administrator',
-    'lsdigest_usub_complete' => 'You succesfully unsubscribe from digest',
-    'lsdigest_usub_already' => 'You already unsubscribe from digest',
+    'lsdigest_usub_complete' => 'You have successfully unsubscribe',
+    'lsdigest_usub_digest_already' => 'You already unsubscribe from digest mailing',
+    'lsdigest_usub_already' => 'You already unsubscribe from mailings',
+    'lsdigest_usub_complete_digest' => 'You have successfully abandon digest mailing',
     
     'unsub_notice' => '<p><a href="' . Config::Get('path.root.web') . '/mailing/unsubscribe?email=%%email%%&hash=%%hash%%"> If you do not want to receive these notifications, click on this link</a></p>'
 );

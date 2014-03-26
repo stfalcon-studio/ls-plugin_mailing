@@ -167,7 +167,7 @@ class PluginMailing_ModuleMailing extends Module
             $oUserTo = $this->User_GetUserById($oMail->getUserId());
             $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
             $this->Lang_SetLang($oUserTo->getUserLang());
-            $sText .= $this->Lang_Get('plugin.mailing.unsub_notice', array('email' => $oUserTo->getMail(), 'hash' => $oUserTo->getUserNoDigestHash()));
+            $sText .= $this->generateUnsubscribeLink($oUserTo, $oMail);
             $this->Mail_SetAdress($oUserTo->getMail(), $oUserTo->getLogin());
             $this->Mail_SetSubject($oMail->getMailingTitle());
             $this->Mail_SetBody($sText);
@@ -177,6 +177,26 @@ class PluginMailing_ModuleMailing extends Module
                 return $this->SetSended($oMail->getId());
             }
             return false;
+        }
+    }
+
+    /**
+     * @param ModuleUser_EntityUser $oUser
+     * @param PluginMailing_ModuleMailing_EntityMailingQueue $oMail
+     *
+     * @return string
+     */
+    private function generateUnsubscribeLink($oUser, $oMail){
+        if ($oMail->getMailingType() == 'mailing-digest') {
+            return $this->Lang_Get(
+                'plugin.mailing.unsub_notice',
+                array('email' => $oUser->getMail(), 'hash' => $oUser->getUserNoticeDigestBestTopicsHash())
+            );
+        } else {
+            return $this->Lang_Get(
+                'plugin.mailing.unsub_notice',
+                array('email' => $oUser->getMail(), 'hash' => $oUser->getUserNoDigestHash())
+            );
         }
     }
 

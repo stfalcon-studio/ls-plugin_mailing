@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `prefix_mailing` (
     `mailing_lang`  TEXT NOT NULL,
     `mailing_date` DATETIME NOT NULL ,
     `mailing_talk` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0',
+    `mailing_type` VARCHAR(100) DEFAULT NULL,
     INDEX `send_by_user_id` (`send_by_user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -37,3 +38,5 @@ ADD CONSTRAINT `prefix_mailing_queue_ibfk_3` FOREIGN KEY (`talk_id`) REFERENCES 
 
 ALTER TABLE `prefix_user` ADD `user_no_digest` TINYINT(1) NOT NULL DEFAULT '0';
 ALTER TABLE `prefix_user` ADD `user_no_digest_hash` VARCHAR(16) NOT NULL;
+ALTER TABLE `prefix_user` ADD `user_notice_digest_best_topics_hash` varchar(16) NOT NULL;
+ALTER TABLE `prefix_user` ADD `user_settings_notice_digest_best_topics` tinyint(1) NOT NULL DEFAULT '1';
