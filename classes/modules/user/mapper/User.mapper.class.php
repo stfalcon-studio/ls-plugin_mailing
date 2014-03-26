@@ -78,12 +78,13 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             $sql = "UPDATE
                         " . Config::Get('db.table.user') . "
                     SET
-                        user_no_digest_hash = ?
+                        user_no_digest_hash = ?,
+                        user_notice_digest_best_topics_hash = ?
                     WHERE
                         user_id = ?d
                         ";
             foreach ($aRows as $aRow) {
-                if (!$this->oDb->query($sql, func_generator(16), $aRow['user_id'])) {
+                if (!$this->oDb->query($sql, func_generator(16), func_generator(16), $aRow['user_id'])) {
                     $bRes = false;
                 }
             }
@@ -98,7 +99,21 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
          $sql = "UPDATE
                         " . Config::Get('db.table.user') . "
                     SET
-                        user_no_digest = 1
+                        user_no_digest = 1,
+                        user_settings_notice_digest_best_topics = 0
+                    WHERE
+                        user_id = ?d
+                        ";
+        return $this->oDb->query($sql, $oUser->getId());
+
+    }
+
+    public function UnsubscribeDigest($oUser)
+    {
+        $sql = "UPDATE
+                        " . Config::Get('db.table.user') . "
+                    SET
+                        user_settings_notice_digest_best_topics = 0
                     WHERE
                         user_id = ?d
                         ";

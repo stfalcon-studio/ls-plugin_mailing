@@ -80,6 +80,15 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
         return $this->_aData['mailing_talk'];
     }
 
+    public function getMailingType()
+    {
+        if (isset($this->_aData['mailing_type'])) {
+            return $this->_aData['mailing_type'];
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Setters
      */
@@ -131,6 +140,11 @@ class PluginMailing_ModuleMailing_EntityMailing extends Entity
     public function setMailingTalk($data)
     {
         $this->_aData['mailing_talk'] = (bool)$data;
+    }
+
+    public function setMailingType($data)
+    {
+        $this->_aData['mailing_type'] = $data;
     }
 
 }

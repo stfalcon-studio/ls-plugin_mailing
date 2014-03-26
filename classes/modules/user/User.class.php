@@ -78,6 +78,13 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
         return $this->oMapper->UnsubscribeUser($oUser);
     }
 
+    public function UnsubscribeDigest($oUser)
+    {
+        $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('user_update'));
+        $this->Cache_Delete("user_{$oUser->getId()}");
+        return $this->oMapper->UnsubscribeDigest($oUser);
+    }
+
     public function UpdateSubscription($oUser)
     {
         return $this->oMapper->UpdateSubscription($oUser);

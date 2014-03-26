@@ -61,8 +61,10 @@ return array(
     'lsdigest_usub_noparams' => 'E-mail або хеш не знайдений',
     'lsdigest_usub_nouser' => 'Користувача по параметрами не знайдено',
     'lsdigest_usub_sys_error' => 'Неможливо відмовитися від підписки, звяжіться з адміністратором',
-    'lsdigest_usub_complete' => 'Ви успішно відмовитися від дайджесту',
-    'lsdigest_usub_already' => 'Ви вже відмовитися від дайджесту',
+    'lsdigest_usub_complete' => 'Ви успішно відмовитися від розсилки',
+    'lsdigest_usub_digest_already' => 'Ви вже відмовитися від дайджест розсилки',
+    'lsdigest_usub_already' => 'Ви вже відмовитися від розсилок',
+    'lsdigest_usub_complete_digest' => 'Ви успішно відмовитися від дайджест розсилки',
     
     'unsub_notice' => '<p><a href="' . Config::Get('path.root.web') . '/mailing/unsubscribe?email=%%email%%&hash=%%hash%%">Якщо Ви не хочете отримувати ці повідомлення, натисніть на це посилання</a></p>'
 );
