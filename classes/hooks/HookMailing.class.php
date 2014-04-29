@@ -29,7 +29,7 @@ class PluginMailing_HookMailing extends Hook
     {
         $this->AddHook('template_menu_talk_talk_item', 'InitAction', __CLASS__);
         $this->AddHook('template_form_settings_tuning_end', 'FormTuning', __CLASS__);
-        $this->AddHook('module_user_update_after', 'UpdateTuning', __CLASS__);
+        $this->AddHook('settings_tuning_save_before', 'actionTuningSave', __CLASS__);
     }
 
     /**
@@ -44,23 +44,23 @@ class PluginMailing_HookMailing extends Hook
 
         // If user is admin than show link
         if ($oUser && $oUser->isAdministrator()) {
-            return $this->Viewer_Fetch(
-                            Plugin::GetTemplatePath(__CLASS__) . 'menu.mailing.tpl');
+            return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'menu.mailing.tpl');
         }
     }
 
     public function FormTuning()
     {
-        return $this->Viewer_Fetch(
-                        Plugin::GetTemplatePath(__CLASS__) . 'actions/ActionSettings/form_tuning.tpl');
+        return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'actions/ActionSettings/form_tuning.tpl');
     }
 
-    public function UpdateTuning($aVars)
+    public function actionTuningSave($aData)
     {
-        $oUser = $aVars['params'][0];
-        if (isPost('submit_settings_tuning')) {
-            $oUser->setUserNoDigest(getRequest('settings_notice_administration') ? 0 : 1 );
-            $this->User_UpdateSubscription($oUser);
+        $oUser = $aData['oUser'];
+
+        if (getRequest('settings_notice_administration', false)) {
+            $oUser->addSubscribe('admin');
+        } else {
+            $oUser->removeSubscribe('admin');
         }
     }
 

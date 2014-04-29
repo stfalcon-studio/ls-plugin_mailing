@@ -83,10 +83,19 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
         return $this->oMapper->UpdateSubscription($oUser);
     }
     
-    public function SetUserCurrent(ModuleUser_EntityUser $oUser)
+    public function SetUserCurrent($oUser)
     {
         $this->oUserCurrent = $oUser;
-    }        
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function Update(ModuleUser_EntityUser $oUser)
+    {
+        parent::Update($oUser);
+
+        return $this->oMapper->UpdateSubscription($oUser);
+    }
 
 }

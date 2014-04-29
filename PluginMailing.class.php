@@ -30,10 +30,13 @@ class PluginMailing extends Plugin
         'mapper' => array(
             'ModuleTalk_MapperTalk' => '_ModuleTalk_MapperTalk',
             'ModuleUser_MapperUser' => '_ModuleUser_MapperUser'
-            ),
+        ),
         'module' => array(
             'ModuleUser' => '_ModuleUser',
-        )
+        ),
+        'entity' => array(
+            'ModuleUser_EntityUser' => '_ModuleUser_EntityUser',
+        ),
     );
 
     /**
