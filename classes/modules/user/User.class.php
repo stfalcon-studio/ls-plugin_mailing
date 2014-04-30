@@ -34,9 +34,9 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
      * @param array $aFilter
      * @return array
      */
-    public function GetUsersIDList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array())
+    public function GetUsersIDList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array(), $sMailingType = '')
     {
-        $aIds = $this->oMapper->GetUsersIDList($aSex, $aLangs, $iSkipUserId, $aFilter);
+        $aIds = $this->oMapper->GetUsersIDList($aSex, $aLangs, $iSkipUserId, $aFilter, $sMailingType);
 
         return $this->GetUsersAdditionalData($aIds);
     }
@@ -71,11 +71,13 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
         return false;
     }
 
-    public function UnsubscribeUser($oUser)
+    public function UnsubscribeUser($oUser, $sType)
     {
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('user_update'));
 		$this->Cache_Delete("user_{$oUser->getId()}");
-        return $this->oMapper->UnsubscribeUser($oUser);
+
+        $oUser->removeSubscribe($sType);
+        return $this->User_Update($oUser);
     }
 
     public function UpdateSubscription($oUser)

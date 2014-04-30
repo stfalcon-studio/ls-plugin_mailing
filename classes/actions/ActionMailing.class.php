@@ -58,6 +58,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             return Router::Action('error'); // Redirect to the error page
         }
 
+        $this->Viewer_Assign("aMailingTypes", Config::Get('plugin.mailing.miling_types'));
         /* Language filter */
         if (in_array('l10n', $this->Plugin_GetActivePlugins())) {
             $aLangs = $this->PluginL10n_L10n_GetAllowedLangsAliases();
@@ -90,6 +91,7 @@ class PluginMailing_ActionMailing extends ActionPlugin
             $oMailing->setMailingLang($aLangs);
             $oMailing->setMailingDate(date("Y-m-d H:i:s"));
             $oMailing->setMailingTalk(getRequest('talk'));
+            $oMailing->setMailingType(getRequest('type'));
 
             if ($this->PluginMailing_ModuleMailing_AddMailing($oMailing)) {
                 $this->Message_AddNoticeSingle($this->Lang_Get("plugin.mailing.ml_ok"));
@@ -317,6 +319,8 @@ class PluginMailing_ActionMailing extends ActionPlugin
     {
         $sEmail = getRequest('email');
         $sHash  = getRequest('hash');
+        $sType  = getRequest('type', Config::get('plugin.mailing.DigestSubscribeName'));
+
         if (!$sHash || !$sEmail) {
             $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_noparams'), $this->Lang_Get('error'));
             return;
@@ -330,13 +334,13 @@ class PluginMailing_ActionMailing extends ActionPlugin
         if ($oUser->getUserNoDigestHash() != $sHash) {
             $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_nouser'), $this->Lang_Get('error'));
             return;
-        } else if ($oUser->getUserNoDigest()) {
+        } else if ($oUser->isSubscribe($sType)) {
             $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_already'), $this->Lang_Get('error'));
             return;
 
         }
 
-        if (!$this->User_UnsubscribeUser($oUser)) {
+        if (!$this->User_UnsubscribeUser($oUser, $sType)) {
             $this->Message_AddError($this->Lang_Get('plugin.mailing.lsdigest_usub_sys_error'), $this->Lang_Get('error'));
         } else {
             $this->Message_AddNotice($this->Lang_Get('plugin.mailing.lsdigest_usub_complete'), $this->Lang_Get('attention'));

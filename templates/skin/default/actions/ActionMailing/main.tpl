@@ -72,6 +72,14 @@
             <textarea name="talk_text" id="talk_text" rows="12">{$_aRequest.talk_text}</textarea>
         </div>
         <div class="fieldset">
+            <label for="type">{$aLang.plugin.mailing.mailing_type}:</label>
+            <select name="type">
+                {foreach from=$aMailingTypes item=sType}
+                    <option>{$sType}</option>
+                {/foreach}
+            </select>
+        </div>
+        <div class="fieldset">
             {$aLang.plugin.mailing.ml_sex}:
             <br />
             <input name="aSex[]" type="checkbox" value="man" checked="checked"/> — {$aLang.user_stats_sex_man}

@@ -28,17 +28,19 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
      * @param bool  $iSkipLang
      * @return array
      */
-    public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array())
+    public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array(), $sType = '')
     {
         if (!count($aSex)) {
             return array();
         }
 
         $sql = 'SELECT `user_id`
-                  FROM ' . Config::Get('db.table.user') . '
+                    FROM ' . Config::Get('db.table.user') . '
                  WHERE `user_profile_sex` IN (?a)
-                   AND user_no_digest = 0 
+                    AND user_no_digest = 0
+                    AND user_subscribes LIKE ?
                ';
+        $sType = '%"' . $sType . '"%';
 
         foreach ($aFilter as $key => $value) {
             $sql .= ' AND ' . $key . ' = ' . $value;
@@ -50,8 +52,9 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         }
         if (count($aLangs)) {
             $sql .= ' AND `user_lang` IN (?a)';
-            return $this->oDb->selectCol($sql, $aSex, $aLangs);
+            return $this->oDb->selectCol($sql, $aSex, $sType, $aLangs);
         }
+
         return $this->oDb->selectCol($sql, $aSex);
     }
 
@@ -80,6 +83,8 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
                         " . Config::Get('db.table.user') . "
                     SET
                         user_no_digest_hash = ?,
+
+                        # TESTS
                         #user_subscribes = IFNULL(user_subscribes, {$aSubscribe})
                         user_subscribes = IFNULL({$aSubscribe}, {$aSubscribe})
                     WHERE

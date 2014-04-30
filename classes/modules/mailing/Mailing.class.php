@@ -92,7 +92,7 @@ class PluginMailing_ModuleMailing extends Module
     {
 
         // Get recipients ids
-        $aUsersTo = $this->User_GetUsersIdList($oMailing->getMailingSex(), $oMailing->getMailingLang(), $oMailing->getSendByUserId(), $oMailing->getFilter());
+        $aUsersTo = $this->User_GetUsersIdList($oMailing->getMailingSex(), $oMailing->getMailingLang(), $oMailing->getSendByUserId(), $oMailing->getFilter(), $oMailing->getMailingType());
 
         // Return if recipients list is empty
         $iAdded = 0;
