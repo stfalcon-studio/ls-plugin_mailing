@@ -167,7 +167,13 @@ class PluginMailing_ModuleMailing extends Module
             $oUserTo = $this->User_GetUserById($oMail->getUserId());
             $sText = htmlspecialchars_decode($oMail->getMailingText(), ENT_QUOTES);
             $this->Lang_SetLang($oUserTo->getUserLang());
-            $sText .= $this->Lang_Get('plugin.mailing.unsub_notice', array('email' => $oUserTo->getMail(), 'hash' => $oUserTo->getUserNoDigestHash()));
+            $sText .= $this->Lang_Get('plugin.mailing.unsub_notice',
+                array(
+                    'type' => $oMail->getMailingType() ? "type={$oMail->getMailingType()}&" : '',
+                    'email' => $oUserTo->getMail(),
+                    'hash' => $oUserTo->getUserNoDigestHash()
+                )
+            );
             $this->Mail_SetAdress($oUserTo->getMail(), $oUserTo->getLogin());
             $this->Mail_SetSubject($oMail->getMailingTitle());
             $this->Mail_SetBody($sText);

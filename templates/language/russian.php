@@ -67,6 +67,6 @@ return array(
     'lsdigest_usub_already' => 'Вы уже отказаться от дайджест',
     'mailing_type' => 'Тип розсылки',
     
-    'unsub_notice' => '<p><a href="' . Config::Get('path.root.web') . '/mailing/unsubscribe?email=%%email%%&hash=%%hash%%">Если Вы не хотите получать эти уведомления, нажмите на эту ссылку</a></p>'
+    'unsub_notice' => '<p><a href="' . Config::Get('path.root.web') . '/mailing/unsubscribe?%%type%%email=%%email%%&hash=%%hash%%">Если Вы не хотите получать эти уведомления, нажмите на эту ссылку</a></p>'
 );
 
