@@ -27,7 +27,8 @@ class PluginMailing_ModuleUser_EntityUser extends PluginMailing_Inherit_ModuleUs
     public function getUserSubscribes()
     {
         if ($this->_aData['user_subscribes']) {
-            return json_decode($this->_aData['user_subscribes']);
+            $aResult = @json_decode($this->_aData['user_subscribes']);
+            return !is_array($aResult) ? array() : $aResult;
         }
 
         return array();
@@ -46,14 +47,14 @@ class PluginMailing_ModuleUser_EntityUser extends PluginMailing_Inherit_ModuleUs
     public function addSubscribe($sSubscribeName)
     {
         if (!$this->isSubscribe($sSubscribeName)) {
-            $this->_aData['user_subscribes'] = json_encode(array_merge(json_decode($this->_aData['user_subscribes']), array($sSubscribeName)));
+            $this->_aData['user_subscribes'] = json_encode(array_merge($this->getUserSubscribes(), array($sSubscribeName)));
         }
     }
 
     public function removeSubscribe($sSubscribeName)
     {
         if ($this->isSubscribe($sSubscribeName)) {
-            $aSubscribes = array_flip(json_decode($this->_aData['user_subscribes']));
+            $aSubscribes = array_flip($this->getUserSubscribes());
             unset($aSubscribes[$sSubscribeName]);
             $aSubscribes = array_values(array_flip($aSubscribes));
             $this->_aData['user_subscribes'] = json_encode($aSubscribes);
