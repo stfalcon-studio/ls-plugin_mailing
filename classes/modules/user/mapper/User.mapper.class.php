@@ -37,7 +37,6 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         $sql = 'SELECT `user_id`
                     FROM ' . Config::Get('db.table.user') . '
                  WHERE `user_profile_sex` IN (?a)
-                    AND user_no_digest = 0
                     AND user_subscribes LIKE ?
                ';
         $sType = '%"' . $sType . '"%';
@@ -82,11 +81,7 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             $sql = "UPDATE
                         " . Config::Get('db.table.user') . "
                     SET
-                        user_no_digest_hash = ?,
-
-                        # TESTS
-                        #user_subscribes = IFNULL(user_subscribes, {$aSubscribe})
-                        user_subscribes = IFNULL({$aSubscribe}, {$aSubscribe})
+                        user_subscribes = IFNULL(user_subscribes, {$aSubscribe})
                     WHERE
                         user_id = ?d
                         ";
@@ -99,19 +94,6 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             $bRes = false;
         }
         return $bRes;
-    }
-
-    public function UnsubscribeUser($oUser)
-    {
-         $sql = "UPDATE
-                        " . Config::Get('db.table.user') . "
-                    SET
-                        user_no_digest = 1
-                    WHERE
-                        user_id = ?d
-                        ";
-        return $this->oDb->query($sql, $oUser->getId());
-
     }
 
     public function UpdateSubscription($oUser)
