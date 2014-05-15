@@ -25,7 +25,8 @@ Config::Set('MAIL_LIMIT', 20);
 // подставляется в Talk, необходио так же для непоказа автору рассылки писем без ответов
 Config::Set('IP_SENDER', '255.255.255.255');
 
-$sMailingTypeName = 'admin';
+// тип рассылки (разные плагины могут добавлять разные типы рассылок. пользователь сможет отписать от конкретного типа рассылки)
+$sMailingTypeName = 'mailing';
 return array(
     'DigestSubscribeName' => $sMailingTypeName,
     'miling_types' => array(
