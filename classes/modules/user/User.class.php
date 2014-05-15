@@ -96,8 +96,9 @@ class PluginMailing_ModuleUser extends PluginMailing_Inherit_ModuleUser
     public function Update(ModuleUser_EntityUser $oUser)
     {
         parent::Update($oUser);
+        $this->oMapper->UpdateSubscription($oUser);
 
-        return $this->oMapper->UpdateSubscription($oUser);
+        return true;
     }
 
 }

@@ -50,6 +50,8 @@ class PluginMailing_HookMailing extends Hook
 
     public function FormTuning()
     {
+        $oUser = $this->User_GetUserCurrent();
+        $this->Viewer_Assign("bMailingSubscribe", $oUser->isSubscribe(Config::Get('plugin.mailing.DigestSubscribeName')));
         return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'actions/ActionSettings/form_tuning.tpl');
     }
 
@@ -58,9 +60,9 @@ class PluginMailing_HookMailing extends Hook
         $oUser = $aData['oUser'];
 
         if (getRequest('settings_notice_administration', false)) {
-            $oUser->addSubscribe('admin');
+            $oUser->addSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
         } else {
-            $oUser->removeSubscribe('admin');
+            $oUser->removeSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
         }
     }
 
