@@ -81,6 +81,7 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             $sql = "UPDATE
                         " . Config::Get('db.table.user') . "
                     SET
+                        user_no_digest_hash = ?,
                         user_subscribes = IFNULL(user_subscribes, {$aSubscribe})
                     WHERE
                         user_id = ?d
