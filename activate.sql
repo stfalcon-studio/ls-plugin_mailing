@@ -37,4 +37,4 @@ ALTER TABLE `prefix_mailing_queue`
 ADD CONSTRAINT `prefix_mailing_queue_ibfk_3` FOREIGN KEY (`talk_id`) REFERENCES `prefix_talk` (`talk_id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 ALTER TABLE `prefix_user` ADD `user_no_digest_hash` VARCHAR(16) NOT NULL;
-ALTER TABLE `prefix_user` ADD COLUMN `user_subscribes` VARCHAR(255) DEFAULT NULL;
+ALTER TABLE `prefix_user` ADD COLUMN `user_subscribes` VARCHAR(500) DEFAULT NULL;
