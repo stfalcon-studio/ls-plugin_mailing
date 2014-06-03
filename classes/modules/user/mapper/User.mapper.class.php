@@ -54,7 +54,7 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             return $this->oDb->selectCol($sql, $aSex, $sType, $aLangs);
         }
 
-        return $this->oDb->selectCol($sql, $aSex);
+        return $this->oDb->selectCol($sql, $aSex, $sType);
     }
 
     /**
