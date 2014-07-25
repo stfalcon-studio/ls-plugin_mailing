@@ -59,6 +59,8 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - sleep 5
 
+  - php ./plugins/mailing/include/cron/generate-unsub-hash.php
+
   # download and launch Selenium
   - wget -O /tmp/selenium-server-standalone.jar http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar
   - java -jar /tmp/selenium-server-standalone.jar > /dev/null &
