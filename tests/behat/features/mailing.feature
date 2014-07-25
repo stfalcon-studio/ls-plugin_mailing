@@ -25,12 +25,12 @@ Feature: Mailing plugin standart features BDD
         Then I should see in element by css "content" values:
         | value |
         | test subject |
-        | 0 / 2 |
+        | 0 / 1 |
 
         Then I wait "1000"
 
         #Then run send message script
-        Then run script "/plugins/mailing/include/cron/send-mail.php" and result should contain "/2 of 2 messages sended successful/"
+        Then run script "/plugins/mailing/include/cron/send-mail.php" and result should contain "/1 of 1 messages sended successful/"
         Then check is mail on dir
 
         #unsubskribe user

@@ -63,6 +63,7 @@ return array(
     'lsdigest_usub_sys_error' => 'Неможливо відмовитися від підписки, звяжіться з адміністратором',
     'lsdigest_usub_complete' => 'Ви успішно відмовитися від дайджесту',
     'lsdigest_usub_already' => 'Ви вже відмовитися від дайджесту',
+    'mailing_type' => 'Тип розсилки',
     
     'unsub_notice' => '<p><a href="' . Config::Get('path.root.web') . '/mailing/unsubscribe?email=%%email%%&hash=%%hash%%">Якщо Ви не хочете отримувати ці повідомлення, натисніть на це посилання</a></p>'
 );

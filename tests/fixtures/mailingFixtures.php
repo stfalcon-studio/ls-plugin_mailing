@@ -19,6 +19,7 @@ class mailingFixtures extends AbstractFixtures
         $oUser1->setProfileName('Woman1');
         $oUser1->setProfileAbout('Woman1');
         $oUser1->setProfileSex('woman');
+        $oUser1->addSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
         $this->oEngine->User_Update($oUser1);
 
         $oUser2 = $this->_createUser('user-woman2', 'qwerty','user_woman2@info.com', '2012-12-1 00:10:20');
@@ -26,6 +27,7 @@ class mailingFixtures extends AbstractFixtures
         $oUser2->setProfileName('Woman2');
         $oUser2->setProfileAbout('Woman2');
         $oUser2->setProfileSex('woman');
+        $oUser2->addSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
         $this->oEngine->User_Update($oUser2);
 
         $oUser3 = $this->_createUser('user-other1', 'qwerty','user_other1@info.com', '2012-11-1 00:10:20');
@@ -33,6 +35,7 @@ class mailingFixtures extends AbstractFixtures
         $oUser3->setProfileName('other1');
         $oUser3->setProfileAbout('other1');
         $oUser3->setProfileSex('other');
+        $oUser3->addSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
         $this->oEngine->User_Update($oUser3);
 
         $oUser4 = $this->_createUser('user-other2', 'qwerty','user_other2@info.com', '2012-12-1 00:10:20');
@@ -40,7 +43,16 @@ class mailingFixtures extends AbstractFixtures
         $oUser4->setProfileName('other2');
         $oUser4->setProfileAbout('other2');
         $oUser4->setProfileSex('other');
+        $oUser4->addSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
         $this->oEngine->User_Update($oUser4);
+
+        $oUser5 = $this->_createUser('man1', 'qwerty','user_man1@info.com', '2012-12-1 00:10:20');
+
+        $oUser5->setProfileName('man1');
+        $oUser5->setProfileAbout('man1');
+        $oUser5->setProfileSex('man');
+        $oUser5->addSubscribe(Config::Get('plugin.mailing.DigestSubscribeName'));
+        $this->oEngine->User_Update($oUser5);
 
     }
 

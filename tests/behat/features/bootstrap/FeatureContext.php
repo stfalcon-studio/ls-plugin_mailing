@@ -73,7 +73,7 @@ class FeatureContext extends MinkContext
         foreach ($directories as $fileName) {
             $fileContent = file_get_contents('/var/mail/sendmail/new/' . $fileName );
 
-            $pattern = '/(\/mailing\/unsubscribe\?email=user_[a-z]+\@info.com\&hash=[a-f0-9]{16})"/';
+            $pattern = '/(\/mailing\/unsubscribe\?email=user_[a-z0-9]+\@info.com\&hash=[a-f0-9]{16})"/';
 
             if ( !preg_match_all($pattern, $fileContent, $link)) {
                 throw new ExpectationException('Link not found on file', $this->getSession());
@@ -90,7 +90,8 @@ class FeatureContext extends MinkContext
     public function theMessageShouldCointain(TableNode $values)
     {
         $exclude_list = array(".", "..");
-        $directories = reset(array_diff(scandir('/var/mail/sendmail/new'), $exclude_list));
+        $dir = array_diff(scandir('/var/mail/sendmail/new'), $exclude_list);
+        $directories = reset($dir);
 
         if (!count($directories)) {
             throw new ExpectationException('Messages not found on dir', $this->getSession());

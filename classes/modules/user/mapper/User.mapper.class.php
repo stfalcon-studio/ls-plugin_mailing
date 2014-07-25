@@ -28,17 +28,18 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
      * @param bool  $iSkipLang
      * @return array
      */
-    public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array())
+    public function GetUsersIdList(array $aSex, array $aLangs, $iSkipUserId = null, $aFilter = array(), $sType = '')
     {
         if (!count($aSex)) {
             return array();
         }
 
         $sql = 'SELECT `user_id`
-                  FROM ' . Config::Get('db.table.user') . '
+                    FROM ' . Config::Get('db.table.user') . '
                  WHERE `user_profile_sex` IN (?a)
-                   AND user_no_digest = 0 
+                    AND user_subscribes LIKE ?
                ';
+        $sType = '%"' . $sType . '"%';
 
         foreach ($aFilter as $key => $value) {
             $sql .= ' AND ' . $key . ' = ' . $value;
@@ -50,9 +51,10 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         }
         if (count($aLangs)) {
             $sql .= ' AND `user_lang` IN (?a)';
-            return $this->oDb->selectCol($sql, $aSex, $aLangs);
+            return $this->oDb->selectCol($sql, $aSex, $sType, $aLangs);
         }
-        return $this->oDb->selectCol($sql, $aSex);
+
+        return $this->oDb->selectCol($sql, $aSex, $sType);
     }
 
     /**
@@ -74,11 +76,13 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
             $sql .= ' AND user_id = ' . (int) $oUser->getId();
         }
 
+        $aSubscribe = $this->oDb->escape(json_encode(Config::Get('plugin.mailing.miling_types')));
         if ($aRows = $this->oDb->select($sql)) {
             $sql = "UPDATE
                         " . Config::Get('db.table.user') . "
                     SET
-                        user_no_digest_hash = ?
+                        user_no_digest_hash = ?,
+                        user_subscribes = IFNULL(user_subscribes, {$aSubscribe})
                     WHERE
                         user_id = ?d
                         ";
@@ -93,29 +97,17 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         return $bRes;
     }
 
-    public function UnsubscribeUser($oUser)
-    {
-         $sql = "UPDATE
-                        " . Config::Get('db.table.user') . "
-                    SET
-                        user_no_digest = 1
-                    WHERE
-                        user_id = ?d
-                        ";
-        return $this->oDb->query($sql, $oUser->getId());
-
-    }
-
     public function UpdateSubscription($oUser)
     {
         $sql = "UPDATE
                     " . Config::Get('db.table.user') . "
                 SET
-                    user_no_digest = ?d
+                    user_subscribes = ?
                 WHERE
                     user_id = ?d
                 ";
-        return $this->oDb->query($sql, $oUser->getUserNoDigest(), $oUser->getId());
+        $res = $this->oDb->query($sql, json_encode($oUser->getUserSubscribes()), $oUser->getId());
+        return $res;
     }
 }
 
