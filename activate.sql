@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `prefix_mailing` (
     `mailing_lang`  TEXT NOT NULL,
     `mailing_date` DATETIME NOT NULL ,
     `mailing_talk` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0',
-    `mailing_type` VARCHAR(32) DEFAULT NULL;
+    `mailing_type` VARCHAR(32) DEFAULT NULL,
     INDEX `send_by_user_id` (`send_by_user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
