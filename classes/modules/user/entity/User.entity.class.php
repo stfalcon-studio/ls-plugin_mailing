@@ -26,7 +26,7 @@ class PluginMailing_ModuleUser_EntityUser extends PluginMailing_Inherit_ModuleUs
 
     public function getUserSubscribes()
     {
-        if ($this->_aData['user_subscribes']) {
+        if (isset($this->_aData['user_subscribes']) && $this->_aData['user_subscribes']) {
             $aResult = @json_decode($this->_aData['user_subscribes']);
             return !is_array($aResult) ? array() : $aResult;
         }
