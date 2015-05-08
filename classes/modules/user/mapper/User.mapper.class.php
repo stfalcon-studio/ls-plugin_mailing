@@ -37,7 +37,8 @@ class PluginMailing_ModuleUser_MapperUser extends PluginMailing_Inherit_ModuleUs
         $sql = 'SELECT `user_id`
                   FROM ' . Config::Get('db.table.user') . '
                  WHERE `user_profile_sex` IN (?a)
-                   AND user_no_digest = 0 
+                   AND user_no_digest = 0
+                   And user_activate = 1
                ';
 
         foreach ($aFilter as $key => $value) {
